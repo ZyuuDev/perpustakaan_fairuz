@@ -1,7 +1,7 @@
 /* ======== GLOBAL STYLE ======== */
 body {
   font-family: "Poppins", sans-serif;
-  background: #f8f9fa;
+  background: #c2c1c1;
   margin: 0;
   color: #333;
 }
@@ -41,6 +41,7 @@ nav ul li a.active {
 
 .content {
   padding: 40px 80px;
+  padding-bottom: 90px;
   text-align: center;
 }
 
@@ -73,7 +74,7 @@ th {
 }
 
 tr:hover {
-  background: #ecf0f1;
+  background: #b6b6b6;
 }
 
 
@@ -101,7 +102,7 @@ tr:hover {
 
 .login-container h2 {
   margin-bottom: 25px;
-  color: #2c3e50;
+  color: #d6d6d6;
   font-weight: 600;
 }
 
@@ -132,6 +133,7 @@ tr:hover {
   font-weight: 500;
   transition: all 0.3s;
   width: 100%;
+  text-decoration: none
 }
 
 .login-container button:hover {
@@ -157,4 +159,74 @@ footer {
     left: 0;
     width: 100%;
     box-shadow: 0 -2px 5px rgba(0,0,0,0.1);
+}
+
+/* ===== FORM TAMBAH BUKU ===== */
+.form-card {
+  max-width: 420px;
+  margin: 30px auto;
+  background: #ffffff;
+  padding: 30px 35px;
+  border-radius: 14px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
+  animation: fadeUp 0.5s ease;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  text-align: left;
+  margin-bottom: 16px;
+}
+
+.form-group label {
+  font-size: 0.9rem;
+  font-weight: 500;
+  margin-bottom: 6px;
+  color: #2c3e50;
+}
+
+.form-group input {
+  padding: 11px 14px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  font-size: 0.95rem;
+  transition: all 0.25s ease;
+}
+
+.form-group input:focus {
+  outline: none;
+  border-color: #1abc9c;
+  box-shadow: 0 0 0 3px rgba(26, 188, 156, 0.15);
+}
+
+.btn-submit {
+  width: 100%;
+  margin-top: 10px;
+  background: linear-gradient(135deg, #1abc9c, #16a085);
+  color: white;
+  border: none;
+  padding: 12px;
+  border-radius: 10px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.btn-submit:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 18px rgba(26, 188, 156, 0.35);
+}
+
+/* animasi halus */
+@keyframes fadeUp {
+  from {
+    opacity: 0;
+    transform: translateY(15px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
