@@ -1,98 +1,134 @@
-<?php include 'config.php'; ?>
+<?php
+include 'config/config.php';
+include 'config/auth_check.php';
+check_access(); // Basic check to ensure logged in
+?>
 <!DOCTYPE html>
 <html class="light" lang="id">
 <head>
     <meta charset="utf-8"/>
     <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
     <title>Data Buku | LibAdmin</title>
-    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link rel="stylesheet" href="assets/styles/style.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet"/>
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet"/>
-    <script id="tailwind-config">
-        tailwind.config = {
-            darkMode: "class",
-            theme: {
-                extend: {
-                    colors: {
-                        "primary": "#137fec",
-                        "background-light": "#f6f7f8",
-                        "background-dark": "#101922",
-                    },
-                },
-            },
-        }
-    </script>
     <style>
         body { font-family: 'Inter', sans-serif; }
         /* Animasi fade untuk modal */
         .modal { transition: opacity 0.2s ease-in-out; }
     </style>
 </head>
-<body class="bg-background-light dark:bg-background-dark font-display text-slate-800 dark:text-slate-200 min-h-screen">
+<body class="buku-body">
 
-<nav class="sticky top-0 z-50 bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800 shadow-sm">
-    <div class="max-w-[1440px] mx-auto px-6 h-16 flex items-center justify-between">
-        <div class="flex items-center gap-8">
-            <div class="flex items-center gap-2">
-                <div class="w-8 h-8 bg-primary rounded flex items-center justify-center text-white">
-                    <span class="material-icons text-xl">library_books</span>
+<nav class="buku-navbar">
+    <div class="buku-navbar-container">
+        <div class="buku-navbar-left">
+            <div class="buku-brand">
+                <div class="buku-brand-icon">
+                    <span class="material-icons">library_books</span>
                 </div>
-                <span class="font-bold text-xl tracking-tight text-slate-900 dark:text-white uppercase">Perpustakaan</span>
+                <span class="buku-brand-text">Perpustakaan</span>
             </div>
-            <div class="hidden md:flex items-center gap-1">
-                <a class="px-4 py-2 text-sm font-medium text-slate-500 hover:text-primary transition-colors" href="index.php">Dashboard</a>
-                <a class="px-4 py-2 text-sm font-bold text-primary border-b-2 border-primary" href="buku.php">Data Buku</a>
-                <a class="px-4 py-2 text-sm font-medium text-slate-500 hover:text-primary transition-colors" href="pegawai.php">Data Pegawai</a>
-                <a class="px-4 py-2 text-sm font-medium text-slate-500 hover:text-primary transition-colors" href="peminjaman.php">Peminjaman</a>
-                <a class="px-4 py-2 text-sm font-medium text-slate-500 hover:text-primary transition-colors" href="anggota.php">Data Anggota</a>
+            <div class="buku-nav-links">
+                <a class="buku-nav-link" href="dashboard.php">Dashboard</a>
+                <a class="buku-nav-link active" href="buku.php">Data Buku</a>
+                <?php if ($_SESSION['level'] == 'admin'): ?>
+                <a class="buku-nav-link" href="pegawai.php">Data Pegawai</a>
+                <a class="buku-nav-link" href="anggota.php">Data Anggota</a>
+                <?php endif; ?>
+                <?php if ($_SESSION['level'] == 'admin' || $_SESSION['level'] == 'petugas'): ?>
+                <a class="buku-nav-link" href="peminjaman.php">Peminjaman</a>
+                <?php endif; ?>
             </div>
         </div>
-        <a href="login.php" class="p-2 text-red-500 hover:bg-red-50 rounded-full"><span class="material-icons">logout</span></a>
+        <div style="display: flex; align-items: center; gap: 0.5rem;">
+            <a href="auth/logout.php" class="buku-logout"><span class="material-icons">logout</span></a>
+            <button class="hamburger" onclick="toggleMobileMenu()">
+                <span class="material-icons">menu</span>
+            </button>
+        </div>
     </div>
 </nav>
 
-<main class="max-w-[1440px] mx-auto px-6 py-8">
-    <div class="mb-8 flex flex-col md:flex-row md:items-end justify-between gap-4">
-        <div>
-            <h1 class="text-2xl font-bold text-slate-900 dark:text-white">📘 Manajemen Data Buku</h1>
-            <p class="text-slate-500 dark:text-slate-400 mt-1">Kelola koleksi buku perpustakaan secara efisien.</p>
+<!-- Mobile Menu -->
+<div class="mobile-menu" id="mobileMenu">
+  <div class="mobile-menu-overlay" onclick="toggleMobileMenu()"></div>
+  <div class="mobile-menu-content">
+    <div class="mobile-menu-header">
+      <div class="buku-brand">
+        <div class="buku-brand-icon">
+          <span class="material-icons">library_books</span>
         </div>
-        <button onclick="openModal('modalTambah')" class="flex items-center gap-2 bg-primary hover:bg-primary/90 text-white font-bold py-2.5 px-5 rounded-lg shadow-lg transition-all active:scale-95">
-            <span class="material-icons text-sm">add</span>
+        <span class="buku-brand-text">Menu</span>
+      </div>
+      <button class="mobile-menu-close" onclick="toggleMobileMenu()">
+        <span class="material-icons">close</span>
+      </button>
+    </div>
+    <nav class="mobile-nav">
+      <a href="dashboard.php">Dashboard</a>
+      <a href="buku.php" class="active">Data Buku</a>
+      <?php if ($_SESSION['level'] == 'admin'): ?>
+      <a href="pegawai.php">Data Pegawai</a>
+      <a href="anggota.php">Data Anggota</a>
+      <?php endif; ?>
+      <?php if ($_SESSION['level'] == 'admin' || $_SESSION['level'] == 'petugas'): ?>
+      <a href="peminjaman.php">Peminjaman</a>
+      <?php endif; ?>
+      <div class="mobile-nav-divider"></div>
+      <a href="auth/logout.php" style="color: #ef4444;">Logout</a>
+    </nav>
+  </div>
+</div>
+
+<main class="buku-main">
+    <div class="buku-header">
+        <div>
+            <h1>📘 Manajemen Data Buku</h1>
+            <p>Kelola koleksi buku perpustakaan secara efisien.</p>
+        </div>
+        <?php if ($_SESSION['level'] == 'admin'): ?>
+        <button onclick="openModal('modalTambah')" class="buku-btn-add">
+            <span class="material-icons">add</span>
             TAMBAH BUKU BARU
         </button>
+        <?php endif; ?>
     </div>
 
-    <div class="bg-white dark:bg-slate-900 rounded-xl shadow-sm overflow-hidden border border-slate-200 dark:border-slate-800">
-        <div class="overflow-x-auto">
-            <table class="w-full text-left border-collapse">
+    <div class="buku-table-wrapper">
+        <div class="buku-table-container">
+            <table class="buku-table">
                 <thead>
-                    <tr class="bg-[#0f172a] text-white">
-                        <th class="px-6 py-4 text-xs font-bold uppercase tracking-wider text-left">ISBN</th>
-                        <th class="px-6 py-4 text-xs font-bold uppercase tracking-wider text-left">Judul Buku</th>
-                        <th class="px-6 py-4 text-xs font-bold uppercase tracking-wider text-left">Pengarang</th>
-                        <th class="px-6 py-4 text-xs font-bold uppercase tracking-wider text-left">Penerbit</th>
-                        <th class="px-6 py-4 text-xs font-bold uppercase tracking-wider text-right">Aksi</th>
+                    <tr>
+                        <th>ISBN</th>
+                        <th>Judul Buku</th>
+                        <th>Pengarang</th>
+                        <th>Penerbit</th>
+                        <th class="text-right">Aksi</th>
                     </tr>
                 </thead>
-                <tbody class="divide-y divide-slate-100 dark:divide-slate-800">
+                <tbody>
                     <?php
                     $result = mysqli_query($conn, "SELECT * FROM buku");
                     while ($row = mysqli_fetch_assoc($result)) {
                     ?>
-                    <tr class="hover:bg-primary/5 transition-colors">
-                        <td class="px-6 py-4 text-sm font-semibold"><?php echo $row['isbn']; ?></td>
-                        <td class="px-6 py-4 text-sm"><?php echo $row['judul']; ?></td>
-                        <td class="px-6 py-4 text-sm"><?php echo $row['pengarang']; ?></td>
-                        <td class="px-6 py-4 text-sm"><?php echo $row['penerbit']; ?></td>
-                        <td class="px-6 py-4 text-right">
-                            <div class="flex justify-end gap-3">
-                                <button 
+                    <tr>
+                        <td class="font-semibold"><?php echo $row['isbn']; ?></td>
+                        <td><?php echo $row['judul']; ?></td>
+                        <td><?php echo $row['pengarang']; ?></td>
+                        <td><?php echo $row['penerbit']; ?></td>
+                        <?php if ($_SESSION['level'] == 'admin'): ?>
+                        <td class="text-right">
+                            <div class="actions">
+                                <button                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        
                                     onclick='openEditModal(<?php echo json_encode($row); ?>)' 
-                                    class="text-primary hover:underline font-bold text-sm">Edit</button>
-                                <a href="buku_hapus.php?id=<?php echo $row['isbn']; ?>" onclick="return confirm('Hapus?')" class="text-rose-600 hover:underline font-bold text-sm">Hapus</a>
+                                    class="buku-link-edit">Edit</button>
+                                <a href="crud/buku/buku_hapus.php?id=<?php echo $row['isbn']; ?>" onclick="return confirm('Hapus?')" class="buku-link-delete">Hapus</a>
                             </div>
                         </td>
+                        <?php else: ?>
+                        <td class="text-right">-</td>
+                        <?php endif; ?>
                     </tr>
                     <?php } ?>
                 </tbody>
@@ -101,79 +137,103 @@
     </div>
 </main>
 
-<div id="modalTambah" class="hidden fixed inset-0 z-[100] flex items-center justify-center p-4">
-    <div class="fixed inset-0 bg-black/50 backdrop-blur-sm" onclick="closeModal('modalTambah')"></div>
-    <div class="relative bg-white dark:bg-slate-900 w-full max-w-md rounded-2xl shadow-2xl p-8">
-        <h2 class="text-xl font-bold mb-6">Tambah Buku Baru</h2>
-        <form action="buku_tambah_aksi.php" method="post" class="space-y-4">
-            <input type="text" name="isbn" placeholder="ISBN (978...)" class="w-full border rounded-lg p-2.5 bg-transparent" required>
-            <input type="text" name="judul" placeholder="Judul Buku" class="w-full border rounded-lg p-2.5 bg-transparent" required>
-            <div class="grid grid-cols-2 gap-4">
-                <input type="text" name="pengarang" placeholder="Pengarang" class="w-full border rounded-lg p-2.5 bg-transparent">
-                <input type="text" name="penerbit" placeholder="Penerbit" class="w-full border rounded-lg p-2.5 bg-transparent">
+<div id="modalTambah" class="buku-modal">
+    <div class="buku-modal-overlay" onclick="closeModal('modalTambah')"></div>
+    <div class="buku-modal-content">
+        <h2>Tambah Buku Baru</h2>
+        <form action="crud/buku/buku_tambah_aksi.php" method="post">
+            <div style="margin-bottom: 1rem;">
+                <label class="form-group-label">ISBN</label>
+                <input type="text" name="isbn" placeholder="ISBN (978...)" required>
             </div>
-            <div class="grid grid-cols-2 gap-4">
-                <input type="text" name="tahun" placeholder="Tahun" class="w-full border rounded-lg p-2.5 bg-transparent">
-                <input type="text" name="genre" placeholder="Genre" class="w-full border rounded-lg p-2.5 bg-transparent">
+            <div style="margin-bottom: 1rem;">
+                <label class="form-group-label">Judul Buku</label>
+                <input type="text" name="judul" placeholder="Judul Buku" required>
             </div>
-            <button type="submit" class="w-full bg-primary text-white font-bold py-3 rounded-lg shadow-lg">Simpan Buku</button>
+            <div class="form-row">
+                <div style="margin-bottom: 1rem;">
+                    <label class="form-group-label">Pengarang</label>
+                    <input type="text" name="pengarang" placeholder="Pengarang">
+                </div>
+                <div style="margin-bottom: 1rem;">
+                    <label class="form-group-label">Penerbit</label>
+                    <input type="text" name="penerbit" placeholder="Penerbit">
+                </div>
+            </div>
+            <div class="form-row">
+                <div style="margin-bottom: 1rem;">
+                    <label class="form-group-label">Tahun</label>
+                    <input type="text" name="tahun" placeholder="Tahun">
+                </div>
+                <div style="margin-bottom: 1rem;">
+                    <label class="form-group-label">Genre</label>
+                    <input type="text" name="genre" placeholder="Genre">
+                </div>
+            </div>
+            <button type="submit">Simpan Buku</button>
         </form>
     </div>
 </div>
 
-<div id="modalEdit" class="hidden fixed inset-0 z-[100] flex items-center justify-center p-4">
-    <div class="fixed inset-0 bg-black/50 backdrop-blur-sm" onclick="closeModal('modalEdit')"></div>
-    <div class="relative bg-white dark:bg-slate-900 w-full max-w-md rounded-2xl shadow-2xl p-8">
-        <h2 class="text-xl font-bold mb-6 text-primary">Edit Data Buku</h2>
-        <form action="buku_edit_aksi.php" method="post" class="space-y-4">
+<div id="modalEdit" class="buku-modal">
+    <div class="buku-modal-overlay" onclick="closeModal('modalEdit')"></div>
+    <div class="buku-modal-content">
+        <h2 class="text-primary">Edit Data Buku</h2>
+        <form action="crud/buku/buku_edit_aksi.php" method="post">
             <input type="hidden" name="id" id="edit_id">
             
-            <div class="space-y-1">
-                <label class="text-xs font-bold text-slate-400 uppercase">ISBN (ID Tetap)</label>
-                <input type="text" id="edit_isbn_display" class="w-full border rounded-lg p-2.5 bg-slate-100 dark:bg-slate-800" disabled>
+            <div class="form-group">
+                <label>ISBN (ID Tetap)</label>
+                <input type="text" id="edit_isbn_display" disabled>
             </div>
             
-            <div class="space-y-1">
-                <label class="text-xs font-bold text-slate-400 uppercase">Judul Buku</label>
-                <input type="text" name="judul" id="edit_judul" class="w-full border rounded-lg p-2.5 bg-transparent" required>
+            <div class="form-group">
+                <label>Judul Buku</label>
+                <input type="text" name="judul" id="edit_judul" required>
             </div>
 
-            <div class="grid grid-cols-2 gap-4">
+            <div class="form-row">
                 <div>
-                    <label class="text-xs font-bold text-slate-400 uppercase">Pengarang</label>
-                    <input type="text" name="pengarang" id="edit_pengarang" class="w-full border rounded-lg p-2.5 bg-transparent">
+                    <label>Pengarang</label>
+                    <input type="text" name="pengarang" id="edit_pengarang">
                 </div>
                 <div>
-                    <label class="text-xs font-bold text-slate-400 uppercase">Penerbit</label>
-                    <input type="text" name="penerbit" id="edit_penerbit" class="w-full border rounded-lg p-2.5 bg-transparent">
+                    <label>Penerbit</label>
+                    <input type="text" name="penerbit" id="edit_penerbit">
                 </div>
             </div>
 
-            <div class="grid grid-cols-2 gap-4">
+            <div class="form-row">
                 <div>
-                    <label class="text-xs font-bold text-slate-400 uppercase">Tahun</label>
-                    <input type="text" name="tahun" id="edit_tahun" class="w-full border rounded-lg p-2.5 bg-transparent">
+                    <label>Tahun</label>
+                    <input type="text" name="tahun" id="edit_tahun">
                 </div>
                 <div>
-                    <label class="text-xs font-bold text-slate-400 uppercase">Genre</label>
-                    <input type="text" name="genre" id="edit_genre" class="w-full border rounded-lg p-2.5 bg-transparent">
+                    <label>Genre</label>
+                    <input type="text" name="genre" id="edit_genre">
                 </div>
             </div>
-            <button type="submit" class="w-full bg-primary text-white font-bold py-3 rounded-lg shadow-lg">Update Data Buku</button>
-            <button type="button" onclick="closeModal('modalEdit')" class="w-full text-slate-400 text-sm mt-2">Batal</button>
+            <button type="submit">Update Data Buku</button>
+            <button type="button" onclick="closeModal('modalEdit')">Batal</button>
         </form>
     </div>
 </div>
 
 <script>
+    // Toggle Mobile Menu
+    function toggleMobileMenu() {
+        const menu = document.getElementById('mobileMenu');
+        menu.classList.toggle('show');
+    }
+
     // Buka Modal
     function openModal(id) {
-        document.getElementById(id).classList.remove('hidden');
+        document.getElementById(id).classList.add('show');
     }
 
     // Tutup Modal
     function closeModal(id) {
-        document.getElementById(id).classList.add('hidden');
+        document.getElementById(id).classList.remove('show');
     }
 
     // Fungsi Khusus Edit Modal untuk Mengisi Data Otomatis
@@ -190,8 +250,8 @@
     }
 </script>
 
-<footer class="mt-12 py-8 border-t border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900/50">
-    <div class="max-w-[1440px] mx-auto px-6 text-sm text-slate-500 text-center">
+<footer class="buku-footer">
+    <div class="buku-footer-content">
         <p>© 2025 Perpustakaan Digital | All Rights Reserved</p>
     </div>
 </footer>

@@ -1,114 +1,133 @@
-<?php include 'config.php'; ?>
+<?php
+session_start();
+if (isset($_SESSION['login'])) {
+    header("Location: dashboard.php");
+    exit;
+}
+?>
+
 <!DOCTYPE html>
-<html class="light" lang="id">
-<head>
-    <meta charset="utf-8"/>
-    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-    <title>Dashboard | LibAdmin</title>
-    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet"/>
-    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet"/>
-    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
-    <script id="tailwind-config">
-        tailwind.config = {
-            darkMode: "class",
-            theme: {
-                extend: {
-                    colors: {
-                        "primary": "#137fec",
-                        "background-light": "#f6f7f8",
-                        "background-dark": "#101922",
-                    },
-                    fontFamily: {
-                        "display": ["Inter"]
-                    },
-                    borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
-                },
-            },
-        }
-    </script>
-    <style>
-        body { font-family: 'Inter', sans-serif; }
-    </style>
+
+<html class="light" lang="id"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Login - Sistem Informasi Perpustakaan</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link rel="stylesheet" href="assets/styles/style.css">
+<style>
+    body {
+        font-family: 'Inter', sans-serif;
+    }
+    /* Custom floating label animation logic via peer classes */
+    .floating-label-input:placeholder-shown ~ label {
+        transform: translateY(1.2rem) scale(1);
+        color: #617589;
+    }
+    .floating-label-input:focus ~ label,
+    .floating-label-input:not(:placeholder-shown) ~ label {
+        transform: translateY(-0.5rem) scale(0.85);
+        color: #137fec;
+        background-color: white;
+        padding: 0 4px;
+    }
+    .dark .floating-label-input:focus ~ label,
+    .dark .floating-label-input:not(:placeholder-shown) ~ label {
+        background-color: #1a242f;
+    }
+</style>
 </head>
-<body class="bg-background-light dark:bg-background-dark font-display text-slate-800 dark:text-slate-200 min-h-screen">
-
-<nav class="sticky top-0 z-50 bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800 shadow-sm">
-    <div class="max-w-[1440px] mx-auto px-6 h-16 flex items-center justify-between">
-        <div class="flex items-center gap-8">
-            <div class="flex items-center gap-2">
-                <div class="w-8 h-8 bg-primary rounded flex items-center justify-center text-white">
-                    <span class="material-icons text-xl">library_books</span>
-                </div>
-                <span class="font-bold text-xl tracking-tight text-slate-900 dark:text-white uppercase">Perpustakaan</span>
-            </div>
-            <div class="hidden md:flex items-center gap-1">
-                <a class="px-4 py-2 text-sm font-bold text-primary border-b-2 border-primary" href="index.php">Dashboard</a>
-                <a class="px-4 py-2 text-sm font-medium text-slate-500 hover:text-primary dark:text-slate-400 dark:hover:text-primary transition-colors" href="buku.php">Data Buku</a>
-                <a class="px-4 py-2 text-sm font-medium text-slate-500 hover:text-primary dark:text-slate-400 dark:hover:text-primary transition-colors" href="pegawai.php">Data Pegawai</a>
-                <a class="px-4 py-2 text-sm font-medium text-slate-500 hover:text-primary dark:text-slate-400 dark:hover:text-primary transition-colors" href="peminjaman.php">Peminjaman</a>
-                <a class="px-4 py-2 text-sm font-medium text-slate-500 hover:text-primary dark:text-slate-400 dark:hover:text-primary transition-colors" href="anggota.php">Data Anggota</a>
-            </div>
-        </div>
-        <div class="flex items-center gap-4">
-            <a href="login.php" class="p-2 text-red-500 hover:bg-red-50 rounded-full transition-colors" title="Logout">
-                <span class="material-icons text-xl">logout</span>
-            </a>
-        </div>
-    </div>
-</nav>
-
-<main class="max-w-[1440px] mx-auto px-6 py-8">
-    <div class="mb-8">
-        <div class="relative overflow-hidden rounded-2xl bg-gradient-to-br from-primary to-[#0c58a8] p-8 md:p-12 text-white shadow-xl">
-            <div class="relative z-10">
-                <h1 class="text-3xl md:text-5xl font-black mb-4 tracking-tight">Selamat Datang, Admin</h1>
-                <p class="text-white/80 text-lg font-medium max-w-2xl leading-relaxed">
-                    Sistem informasi perpustakaan digital terintegrasi. Pantau semua aktivitas buku, pegawai, dan anggota di sini.
+  <body class="login-body">
+    <div class="login-wrapper">
+    <!-- Main Login Card -->
+      <div class="login-card">
+      <!-- Logo and Header -->
+        <div class="login-header">
+          <div class="login-logo">📚</div>
+          <h1 class="login-title">
+                    Sistem Informasi Perpustakaan
+                </h1>
+<p class="login-subtitle">
+                    Selamat datang kembali, silakan login ke akun Anda
                 </p>
-                <div class="mt-8">
-                    <a href="peminjaman.php" class="inline-flex items-center gap-2 bg-white text-primary px-6 py-3 rounded-lg font-bold hover:bg-slate-50 transition-all shadow-lg">
-                        <span class="material-icons">add_chart</span>
-                        Kelola Peminjaman
-                    </a>
-                </div>
-            </div>
-            <span class="material-icons absolute -right-4 -bottom-4 text-[200px] text-white/10 rotate-12">auto_stories</span>
         </div>
-    </div>
+        <!-- Login Form -->
+      <form action="auth/login_aksi.php" class="login-form" method="POST">
+      <!-- Username Field -->
+          <div class="login-form-group">
+            <input class="floating-label-input login-input" id="username" name="username" placeholder=" " type="text"/>
+<label class="login-label" for="username">
+                        Username atau Email
+                    </label>
+</div>
+<!-- Password Field -->
+<div class="login-form-group">
+    <input
+        id="password"
+        name="password"
+        type="password"
+        placeholder=" "
+        class="floating-label-input login-input with-icon"
+    />
 
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-8">
-        <div class="p-6 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl shadow-sm">
-            <div class="flex items-center gap-4 mb-4">
-                <div class="w-10 h-10 bg-amber-100 text-amber-600 rounded-lg flex items-center justify-center">
-                    <span class="material-icons">info</span>
-                </div>
-                <h3 class="font-bold text-lg">Informasi Staff</h3>
-            </div>
-            <p class="text-slate-600 dark:text-slate-400 text-sm italic">
-                "Ingin meminjam buku? Silakan hubungi staff perpustakaan yang sedang bertugas."
-            </p>
+    <label for="password" class="login-label">
+        Kata Sandi
+    </label>
+
+    <!-- ICON MATA -->
+    <span
+        id="togglePassword"
+        class="material-symbols-outlined login-toggle-password">
+        visibility
+    </span>
+</div>
+
+<!-- Remember Me & Forgot Password -->
+<div class="login-remember-row">
+<label class="login-remember-label">
+<input class="login-checkbox" type="checkbox"/>
+<span class="login-remember-text">Ingat saya</span>
+</label>
+<a class="login-forgot-link" href="#">Lupa Password?</a>
+</div>
+<!-- Submit Button -->
+<button class="login-submit-btn" type="submit">
+                    Masuk ke Sistem
+                </button>
+</form>
+<!-- Footer Links -->
+<div class="login-footer">
+<p>
+                    Butuh bantuan? <a class="login-forgot-link" href="#">Hubungi Admin</a>
+</p>
+</div>
+</div>
+<!-- Copyright Footer -->
+<div class="login-copyright">
+            © 2024 Sistem Informasi Perpustakaan. v2.4.0
         </div>
+</div>
+<!-- Background Decoration -->
+<div class="login-bg-decoration">
+<div class="login-bg-blob-1"></div>
+<div class="login-bg-blob-2"></div>
+</div>
+<script>
+const togglePassword = document.getElementById("togglePassword");
+const passwordInput = document.getElementById("password");
 
-        <div class="p-6 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl shadow-sm">
-            <div class="flex items-center gap-4 mb-4">
-                <div class="w-10 h-10 bg-emerald-100 text-emerald-600 rounded-lg flex items-center justify-center">
-                    <span class="material-icons">tips_and_updates</span>
-                </div>
-                <h3 class="font-bold text-lg">Instruksi Menu</h3>
-            </div>
-            <p class="text-slate-600 dark:text-slate-400 text-sm">
-                Gunakan navigasi di bagian atas untuk mengelola data buku, melihat daftar pegawai, atau mencatat peminjaman baru.
-            </p>
-        </div>
-    </div>
-</main>
+togglePassword.addEventListener("click", () => {
+    const type = passwordInput.getAttribute("type");
 
-<footer class="mt-auto py-8 border-t border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900/50">
-    <div class="max-w-[1440px] mx-auto px-6 flex flex-col md:flex-row justify-between items-center gap-4 text-sm text-slate-500">
-        <p>© 2025 Perpustakaan Digital | All Rights Reserved</p>
-    </div>
-</footer>
+    if (type === "password") {
+        passwordInput.setAttribute("type", "text");
+        togglePassword.textContent = "visibility_off";
+    } else {
+        passwordInput.setAttribute("type", "password");
+        togglePassword.textContent = "visibility";
+    }
+});
+</script>
 
 </body>
 </html>

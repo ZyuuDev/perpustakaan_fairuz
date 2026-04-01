@@ -1,8 +1,11 @@
 <?php
-include 'config.php';
+session_start();
+include '../../config/config.php';
+include '../../config/auth_check.php';
+check_access(['admin']);
 
 // Menangkap data dari form
-$id_anggota = $_POST['id_anggota'];
+$id_anggota = $_POST['id'];
 $nama       = $_POST['nama'];
 $nis        = $_POST['nis'];
 $alamat     = $_POST['alamat'];
@@ -17,7 +20,7 @@ $query = mysqli_query($conn, "UPDATE anggota SET
     WHERE ID_Anggota='$id_anggota'");
 
 if($query) {
-    header("location:anggota.php");
+    header("location:../../anggota.php");
 } else {
     echo "Gagal mengupdate data anggota: " . mysqli_error($conn);
 }

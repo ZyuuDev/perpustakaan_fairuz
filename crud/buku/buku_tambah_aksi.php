@@ -1,5 +1,8 @@
 <?php
-include 'config.php';
+session_start();
+include '../../config/config.php';
+include '../../config/auth_check.php';
+check_access(['admin']);
 
 $isbn = $_POST['isbn'];
 $judul = $_POST['judul'];
@@ -10,4 +13,4 @@ $genre = $_POST['genre'];
 
 mysqli_query($conn, "INSERT INTO buku VALUES('$isbn', '$judul', '$pengarang', '$penerbit', '$tahun', '$genre')");
 
-header("location:buku.php?pesan=inputberhasil");                                                                                                                                
+header("location:../../buku.php?pesan=inputberhasil");

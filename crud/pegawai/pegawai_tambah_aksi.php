@@ -1,5 +1,8 @@
 <?php
-include 'config.php';
+session_start();
+include '../../config/config.php';
+include '../../config/auth_check.php';
+check_access(['admin']);
 
 /* ambil data dari form */
 $nip    = $_POST['nip'];
@@ -15,8 +18,8 @@ $query = mysqli_query($conn, "
 
 /* hasil */
 if ($query) {
-    header("location:pegawai.php");
+    header("location:../../pegawai.php");
 } else {
     echo "Gagal menambahkan data pegawai 😭<br>";
-    echo mysqli_error($koneksi);
+    echo mysqli_error($conn);
 }
