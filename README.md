@@ -23,11 +23,17 @@ Perpustakaan Digital adalah aplikasi web yang digunakan untuk mengelola perpusta
 
 ## Instalasi
 
-0. Wajib  menyiapkan database terlebih dahulu di phpmyadmin
-1. Clone repository ini ke dalam folder www (saya menggunakan laragon).
-2. Masuk ke folder dan jangan lupa nyalakan laragon/xampp terlebih dahulu
-3. buka tab baru lalu buka localhost/namafolder/namafile.php
-4. selamat website sudah bisa digunakan
+1. Wajib  menyiapkan database terlebih dahulu di phpmyadmin
+2. Clone repository ini ke dalam folder www (saya menggunakan laragon).
+3. Masuk ke folder dan jangan lupa nyalakan laragon/xampp terlebih dahulu
+4. buka tab baru lalu buka localhost/namafolder/namafile.php
+5. selamat website sudah bisa digunakan
+
+## Tampilan
+
+<p align="center">
+  <img src="https://i.ibb.co.com/8nw8Nh3R/Screenshot-2026-02-01-214742.png">
+</p>
 
 ## Kontak
 
