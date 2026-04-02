@@ -37,4 +37,4 @@ Perpustakaan Digital adalah aplikasi web yang digunakan untuk mengelola perpusta
 
 ## Kontak
 
-Jika Anda memiliki pertanyaan atau masalah, silakan hubungi saya di email: [EMAIL_ADDRESS] atau di instagram @nndaaaaxy_
+Jika Anda memiliki pertanyaan atau masalah, silakan hubungi saya di email: zyuudev@gmail.com atau di instagram @nndaaaaxy_
