@@ -8,6 +8,7 @@ check_access(['admin']);
 $id_anggota = $_POST['id'];
 $nama       = $_POST['nama'];
 $nis        = $_POST['nis'];
+$nisn       = $_POST['nisn'];
 $alamat     = $_POST['alamat'];
 $nomor_hp   = $_POST['nomor_hp'];
 
@@ -15,6 +16,7 @@ $nomor_hp   = $_POST['nomor_hp'];
 $query = mysqli_query($conn, "UPDATE anggota SET 
     Nama='$nama', 
     NIS='$nis', 
+    nisn='$nisn',
     Alamat='$alamat', 
     Nomor_HP='$nomor_hp' 
     WHERE ID_Anggota='$id_anggota'");

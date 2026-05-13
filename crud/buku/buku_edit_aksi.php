@@ -10,7 +10,8 @@ $pengarang = $_POST['pengarang'];
 $penerbit = $_POST['penerbit'];
 $tahun = $_POST['tahun'];
 $genre = $_POST['genre'];
+$stok = $_POST['stok'];
 
-mysqli_query($conn, "UPDATE buku SET judul='$judul', pengarang='$pengarang', penerbit='$penerbit', tahun='$tahun', genre='$genre' WHERE isbn='$id'");
+mysqli_query($conn, "UPDATE buku SET judul='$judul', pengarang='$pengarang', penerbit='$penerbit', tahun='$tahun', genre='$genre', stok='$stok' WHERE isbn='$id'");
 header("location:../../buku.php");
 ?>

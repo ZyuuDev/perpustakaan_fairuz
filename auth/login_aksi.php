@@ -2,34 +2,49 @@
 session_start();
 include '../config/config.php';
 
-$username = $_POST['username'];
-$password = $_POST['password'];
+$username = mysqli_real_escape_string($conn, $_POST['username']);
+$password = mysqli_real_escape_string($conn, $_POST['password']);
 
-$query = mysqli_query(
-    $conn,
-    "SELECT * FROM user 
-    WHERE username='$username' AND password='$password'"
-);
+// Cek login di tabel users
+$query_users = mysqli_query($conn, "SELECT * FROM users WHERE username='$username' AND password='$password'");
 
-$data = mysqli_fetch_assoc($query);
-$cek = mysqli_num_rows($query);
-
-if ($cek > 0) {
+if (mysqli_num_rows($query_users) > 0) {
+    $user = mysqli_fetch_assoc($query_users);
+    $id_user = $user['id_user'];
+    
     $_SESSION['login'] = true;
-    $_SESSION['id_user'] = $data['id_user'];
-    $_SESSION['nama'] = $data['nama'];
-    $_SESSION['level'] = $data['level'];
+    $_SESSION['id_user'] = $id_user; // add id_user to session
 
-    // redirect sesuai role
-    if ($data['level'] == 'admin') {
-        header("Location: ../dashboard.php");
-    } elseif ($data['level'] == 'petugas') {
-        header("Location: ../dashboard.php");
-    } elseif ($data['level'] == 'peminjam') {
-        header("Location: ../dashboard.php");
+    if ($user['level'] == 'pegawai') {
+        // Ambil data pegawai
+        $q_peg = mysqli_query($conn, "SELECT * FROM pegawai WHERE id_user='$id_user'");
+        if (mysqli_num_rows($q_peg) > 0) {
+            $data = mysqli_fetch_assoc($q_peg);
+            $_SESSION['nip'] = $data['nip'];
+            $_SESSION['nama'] = $data['nama'];
+            $_SESSION['level'] = $data['level']; // 'admin' atau 'petugas'
+
+            header("Location: ../dashboard.php");
+            exit;
+        }
+    } else if ($user['level'] == 'anggota') {
+        // Ambil data anggota
+        $q_ang = mysqli_query($conn, "SELECT * FROM anggota WHERE id_user='$id_user'");
+        if (mysqli_num_rows($q_ang) > 0) {
+            $data = mysqli_fetch_assoc($q_ang);
+            $_SESSION['id_anggota'] = $data['ID_Anggota'];
+            $_SESSION['nama'] = $data['Nama'];
+            $_SESSION['level'] = 'peminjam'; // Sesuai dengan auth flow yang sudah ada
+
+            header("Location: ../dashboard_peminjam.php");
+            exit;
+        }
     }
-
-} else {
-    header("Location: login.php?error=1");
 }
+
+// Login gagal
+echo "<script>
+    alert('Username atau Password salah!');
+    window.location.href = '../index.php';
+</script>";
 ?>

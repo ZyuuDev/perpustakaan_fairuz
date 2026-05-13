@@ -8,7 +8,8 @@ $id_peminjaman = $_POST['id_peminjaman'];
 $id_anggota    = $_POST['id_anggota'];
 $isbn          = $_POST['isbn'];
 $tgl_pinjam    = $_POST['tgl_pinjam'];
-$nip_petugas   = $_SESSION['nip']; // NIP petugas yang login
+$nip_petugas   = $_SESSION['nip']; // NIP petugas yang sedang login
+$status        = 'dipinjam';
 
 // Cek stok buku
 $cek_stok = mysqli_query($conn, "SELECT stok FROM buku WHERE isbn = '$isbn'");
@@ -22,18 +23,19 @@ if ($data_buku['stok'] <= 0) {
     exit;
 }
 
-$query = mysqli_query($conn, "
-    INSERT INTO peminjaman 
-    (ID_Peminjaman, ID_Anggota, isbn, nip_petugas, tgl_pinjam, status)
-    VALUES
-    ('$id_peminjaman', '$id_anggota', '$isbn', '$nip_petugas', '$tgl_pinjam', 'dipinjam')
-");
+// Insert peminjaman
+$query = "INSERT INTO peminjaman 
+          (ID_Peminjaman, ID_Anggota, isbn, nip_petugas, tgl_pinjam, status)
+          VALUES
+          ('$id_peminjaman', '$id_anggota', '$isbn', '$nip_petugas', '$tgl_pinjam', '$status')";
 
-if ($query) {
+if (mysqli_query($conn, $query)) {
     // Kurangi stok buku
     mysqli_query($conn, "UPDATE buku SET stok = stok - 1 WHERE isbn = '$isbn'");
-    header("location:../../peminjaman.php");
+    
+    header("Location: ../../peminjaman.php");
+    exit;
 } else {
-    echo "Gagal menyimpan data: " . mysqli_error($conn);
+    echo "Gagal menyimpan peminjaman: " . mysqli_error($conn);
 }
 ?>

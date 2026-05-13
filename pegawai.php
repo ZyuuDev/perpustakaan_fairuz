@@ -34,6 +34,7 @@ check_access(['admin']);
                 <a class="pegawai-nav-link active" href="pegawai.php">Data Pegawai</a>
                 <a class="pegawai-nav-link" href="anggota.php">Data Anggota</a>
                 <a class="pegawai-nav-link" href="peminjaman.php">Peminjaman</a>
+                <a class="pegawai-nav-link" href="users.php">Data Users</a>
             </div>
         </div>
         <div class="pegawai-navbar-right">
@@ -68,6 +69,7 @@ check_access(['admin']);
       <a href="pegawai.php" class="active">Data Pegawai</a>
       <a href="anggota.php">Data Anggota</a>
       <a href="peminjaman.php">Peminjaman</a>
+      <a href="users.php">Data Users</a>
       <div class="mobile-nav-divider"></div>
       <a href="auth/logout.php" style="color: #ef4444;">Logout</a>
     </nav>
@@ -77,8 +79,8 @@ check_access(['admin']);
 <main class="pegawai-main">
     <div class="pegawai-header">
         <div>
-            <h1>👩‍💼 Manajemen Data Pegawai</h1>
-            <p>Kelola informasi staff dan admin perpustakaan.</p>
+            <h1>Data Pegawai</h1>
+            <p>Kelola data staff dan admin perpustakaan.</p>
         </div>
         <div class="pegawai-header-actions">
             <button onclick="openModal('modalTambah')" class="pegawai-btn-add">
@@ -94,9 +96,11 @@ check_access(['admin']);
                 <thead>
                     <tr>
                         <th class="w-32">NIP</th>
+                        <th>Username</th>
                         <th>Nama Pegawai</th>
                         <th>Alamat</th>
                         <th class="text-center">Gender</th>
+                        <th class="text-center">Level</th>
                         <th class="text-right">Aksi</th>
                     </tr>
                 </thead>
@@ -108,11 +112,17 @@ check_access(['admin']);
                     ?>
                     <tr>
                         <td class="font-semibold"><?php echo $row['nip']; ?></td>
+                        <td class="font-mono"><?php echo $row['username']; ?></td>
                         <td class="font-medium"><?php echo $row['nama']; ?></td>
                         <td class="text-muted"><?php echo $row['alamat']; ?></td>
                         <td class="text-center">
                             <span class="pegawai-badge <?php echo ($row['gender'] == 'L' || $row['gender'] == 'Laki-laki') ? 'male' : 'female'; ?>">
                                 <?php echo $row['gender']; ?>
+                            </span>
+                        </td>
+                        <td class="text-center">
+                            <span class="peminjaman-badge <?php echo ($row['level'] == 'admin') ? 'warning' : 'success'; ?>">
+                                <?php echo ucfirst($row['level']); ?>
                             </span>
                         </td>
                         <td class="text-right">
@@ -127,7 +137,7 @@ check_access(['admin']);
                     <?php 
                         } 
                     } else {
-                        echo "<tr><td colspan='5' class='pegawai-empty'>Belum ada data pegawai.</td></tr>";
+                        echo "<tr><td colspan='7' class='pegawai-empty'>Belum ada data pegawai.</td></tr>";
                     }
                     ?>
                 </tbody>
@@ -144,7 +154,11 @@ check_access(['admin']);
         <form action="crud/pegawai/pegawai_tambah_aksi.php" method="post">
             <div style="margin-bottom: 1rem;">
                 <label class="form-group-label">NIP</label>
-                <input type="text" name="nip" placeholder="NIP" required>
+                <input type="text" name="nip" placeholder="NIP (juga sebagai password login)" required>
+            </div>
+            <div style="margin-bottom: 1rem;">
+                <label class="form-group-label">Username (untuk login)</label>
+                <input type="text" name="username" placeholder="Username" required>
             </div>
             <div style="margin-bottom: 1rem;">
                 <label class="form-group-label">Nama Lengkap</label>
@@ -162,6 +176,13 @@ check_access(['admin']);
                     <option value="Perempuan">Perempuan</option>
                 </select>
             </div>
+            <div style="margin-bottom: 1rem;">
+                <label class="form-group-label">Level</label>
+                <select name="level" required>
+                    <option value="petugas">Petugas</option>
+                    <option value="admin">Admin</option>
+                </select>
+            </div>
             <button type="submit">Simpan Pegawai</button>
         </form>
     </div>
@@ -175,8 +196,12 @@ check_access(['admin']);
         <form action="crud/pegawai/pegawai_edit_aksi.php" method="post">
             <input type="hidden" name="nip_lama" id="edit_nip_lama">
             <div style="margin-bottom: 1rem;">
-                <label class="form-group-label">NIP (ID Pegawai)</label>
+                <label class="form-group-label">NIP (ID Pegawai / Password Login)</label>
                 <input type="text" name="nip" id="edit_nip" placeholder="NIP" required>
+            </div>
+            <div style="margin-bottom: 1rem;">
+                <label class="form-group-label">Username (untuk login)</label>
+                <input type="text" name="username" id="edit_username" placeholder="Username" required>
             </div>
             <div style="margin-bottom: 1rem;">
                 <label class="form-group-label">Nama Lengkap</label>
@@ -191,6 +216,13 @@ check_access(['admin']);
                 <select name="gender" id="edit_gender" required>
                     <option value="Laki-laki">Laki-laki</option>
                     <option value="Perempuan">Perempuan</option>
+                </select>
+            </div>
+            <div style="margin-bottom: 1rem;">
+                <label class="form-group-label">Level</label>
+                <select name="level" id="edit_level" required>
+                    <option value="petugas">Petugas</option>
+                    <option value="admin">Admin</option>
                 </select>
             </div>
             <button type="submit">Update Pegawai</button>
@@ -222,9 +254,11 @@ function closeModal(id) {
 function openEditModal(data) {
   document.getElementById('edit_nip_lama').value = data.nip;
   document.getElementById('edit_nip').value = data.nip;
+  document.getElementById('edit_username').value = data.username;
   document.getElementById('edit_nama_pegawai').value = data.nama;
   document.getElementById('edit_alamat_pegawai').value = data.alamat;
   document.getElementById('edit_gender').value = data.gender;
+  document.getElementById('edit_level').value = data.level;
   
   openModal('modalEdit');
 }

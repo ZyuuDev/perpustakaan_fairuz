@@ -1,41 +1,59 @@
-# Perpustakaan Digital
+# Sistem Informasi Perpustakaan Digital
 
-Perpustakaan Digital adalah aplikasi web yang digunakan untuk mengelola perpustakaan digital. Aplikasi ini memungkinkan pengguna untuk melakukan berbagai aktivitas seperti mengelola buku, pegawai, dan anggota perpustakaan. Aplikasi ini juga memungkinkan pengguna untuk mengelola peminjaman buku.
+Aplikasi web modern berbasis PHP dan MySQL untuk mengelola operasional perpustakaan secara efisien dan tersentralisasi. Sistem ini memisahkan hak akses antara **Admin**, **Petugas**, dan **Anggota** (Peminjam), serta memiliki fitur keamanan dan manajemen relasional yang lengkap.
 
-## Fitur
+## 🌟 Fitur Utama
 
-- Menambahkan buku baru
-- Mengedit buku
-- Menghapus buku
-- Menampilkan data buku
-- Menambahkan pegawai baru
-- Mengedit pegawai
-- Menghapus pegawai
-- Menampilkan data pegawai
-- Menambahkan anggota baru
-- Mengedit anggota
-- Menghapus anggota
-- Menampilkan data anggota
-- Menambahkan peminjaman buku
-- Mengedit peminjaman buku
-- Menghapus peminjaman buku
-- Menampilkan data peminjaman buku
+### 1. Manajemen Hak Akses (Role-Based Access) terpusat
+- **Admin**: Akses penuh ke seluruh sistem CRUD (Buku, Pegawai, Anggota, Peminjaman, Data Users & Role).
+- **Petugas**: Hanya bisa mengelola data Buku dan melayani proses Peminjaman/Pengembalian.
+- **Anggota**: Hanya bisa melihat daftar buku yang tersedia dan riwayat peminjaman pribadinya.
+- *Login Tersentralisasi:* Menggunakan satu tabel `users` utama untuk keamanan dan kemudahan pengelolaan sesi login. Anggota login menggunakan NIS (Username) dan NISN (Password), sedangkan Pegawai menggunakan Username & NIP.
 
-## Instalasi
+### 2. Manajemen Pengguna Lanjutan
+- **Registrasi Mandiri:** Fitur pendaftaran untuk anggota baru.
+- **Kelola Role (Admin):** Admin dapat mengubah level akun (misalnya, Anggota yang dipromosikan menjadi Petugas).
+- **Safe Role Transfer:** Mencegah terjadinya kerusakan database akibat perubahan role secara tiba-tiba (Mengeblok pemindahan anggota menjadi petugas apabila yang bersangkutan masih memiliki status peminjaman buku yang belum dikembalikan).
 
-1. Wajib  menyiapkan database terlebih dahulu di phpmyadmin
-2. Clone repository ini ke dalam folder www (saya menggunakan laragon).
-3. Masuk ke folder dan jangan lupa nyalakan laragon terlebih dahulu
-4. buka tab baru lalu buka localhost/namafolder/namafile.php
-5. selamat website sudah bisa digunakan
-6. jika ada error hubungi contact paling bawah
+### 3. Manajemen Inventaris Buku
+- Operasi CRUD dasar untuk data buku (ISBN, Judul, Pengarang, Penerbit, Tahun, Genre).
+- **Tambah Stok Instan:** Fitur khusus Admin untuk menambah stok buku langsung tanpa masuk ke form edit kompleks.
 
-## Tampilan
+### 4. Transaksi Peminjaman Otomatis
+- Pencatatan peminjaman dan pengembalian otomatis berdasar tanggal.
+- Pembuatan kode riwayat ID Peminjaman (misal A001, A002) otomatis secara _auto-increment_ dengan format kustom.
+- Buku yang dipinjam akan otomatis mengurangi stok buku, dan akan bertambah kembali ketika buku dikembalikan.
+
+## 🚀 Panduan Instalasi & Persiapan
+
+1. **Persiapan Database:**
+   - Siapkan database di phpMyAdmin (XAMPP/Laragon).
+   - Import file `perpus_fairuz.sql` awal jika Anda baru memulai dari struktur lama.
+2. **Setup Proyek:**
+   - Clone/Copy seluruh file *repository* ini ke dalam folder lokal `htdocs` (XAMPP) atau `www` (Laragon).
+   - Pastikan server Apache dan MySQL sudah berjalan.
+3. **Konfigurasi Database:**
+   - Sesuaikan *username* dan *password* database MySQL pada file `config/config.php`.
+4. **MIGRASI DATABASE TERPUSAT (Penting):**
+   - **Wajib Dijalankan Sekali!** Buka browser Anda dan akses skrip migrasi ini:
+     `http://localhost/namafolder/migrate_users.php`
+   - Ini bertujuan untuk membuat tabel `users` dan memindahkan semua kredensial login (anggota & pegawai) ke dalamnya.
+   - Hapus file `migrate_users.php` setelah berhasil untuk menjaga keamanan.
+5. **Jalankan Aplikasi:**
+   - Akses aplikasi utama melalui: `http://localhost/namafolder/index.php`
+
+## 🖥️ Tampilan Antarmuka
+
+Aplikasi dirancang responsif dan estetik mengadopsi standar modern (Glassmorphism & Material Icons):
+- Mendukung layar Mobile (Hamburger Menu slide-out).
+- Navigasi khusus dan penyesuaian fungsional berdasar jenis sesi login.
 
 <p align="center">
-  <img src="https://i.ibb.co.com/8nw8Nh3R/Screenshot-2026-02-01-214742.png">
+  <img src="https://i.ibb.co.com/8nw8Nh3R/Screenshot-2026-02-01-214742.png" alt="Preview Tampilan">
 </p>
 
-## Kontak
+## 📞 Kontak & Dukungan
 
-Jika Anda memiliki pertanyaan atau masalah, silakan hubungi saya di email: zyuudev@gmail.com atau di instagram @nndaaaaxy_
+Jika Anda memiliki pertanyaan, menemui *error/bug*, atau memerlukan perbaikan masalah (*troubleshooting*), silakan hubungi pengembang utama di:
+- **Email:** zyuudev@gmail.com
+- **Instagram:** [@nndaaaaxy_](https://instagram.com/nndaaaaxy_)

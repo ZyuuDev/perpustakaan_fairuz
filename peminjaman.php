@@ -2,6 +2,34 @@
 include 'config/config.php';
 include 'config/auth_check.php';
 check_access(['admin', 'petugas']);
+
+// Query INNER JOIN sesuai instruksi guru
+$query = "SELECT p.ID_Peminjaman, b.judul, a.Nama AS nama_anggota, pg.nama AS nama_petugas,
+                 p.tgl_pinjam, p.tgl_kembali, p.status
+          FROM peminjaman p
+          JOIN buku b ON p.isbn = b.isbn
+          JOIN anggota a ON p.ID_Anggota = a.ID_Anggota
+          JOIN pegawai pg ON p.nip_petugas = pg.nip
+          ORDER BY p.ID_Peminjaman DESC";
+
+$result = mysqli_query($conn, $query);
+
+// Search functionality
+$search = isset($_GET['search']) ? $_GET['search'] : '';
+if (!empty($search)) {
+    $search_escaped = mysqli_real_escape_string($conn, $search);
+    $query = "SELECT p.ID_Peminjaman, b.judul, a.Nama AS nama_anggota, pg.nama AS nama_petugas,
+                     p.tgl_pinjam, p.tgl_kembali, p.status
+              FROM peminjaman p
+              JOIN buku b ON p.isbn = b.isbn
+              JOIN anggota a ON p.ID_Anggota = a.ID_Anggota
+              JOIN pegawai pg ON p.nip_petugas = pg.nip
+              WHERE b.judul LIKE '%$search_escaped%' 
+                 OR a.Nama LIKE '%$search_escaped%'
+                 OR p.ID_Peminjaman LIKE '%$search_escaped%'
+              ORDER BY p.ID_Peminjaman DESC";
+    $result = mysqli_query($conn, $query);
+}
 ?>
 <!DOCTYPE html>
 <html class="light" lang="id">
@@ -34,6 +62,7 @@ check_access(['admin', 'petugas']);
                 <?php if ($_SESSION['level'] == 'admin'): ?>
                 <a class="peminjaman-nav-link" href="pegawai.php">Data Pegawai</a>
                 <a class="peminjaman-nav-link" href="anggota.php">Data Anggota</a>
+                <a class="peminjaman-nav-link" href="users.php">Data Users</a>
                 <?php endif; ?>
                 <a class="peminjaman-nav-link active" href="peminjaman.php">Peminjaman</a>
             </div>
@@ -70,6 +99,7 @@ check_access(['admin', 'petugas']);
       <?php if ($_SESSION['level'] == 'admin'): ?>
       <a href="pegawai.php">Data Pegawai</a>
       <a href="anggota.php">Data Anggota</a>
+      <a href="users.php">Data Users</a>
       <?php endif; ?>
       <a href="peminjaman.php" class="active">Peminjaman</a>
       <div class="mobile-nav-divider"></div>
@@ -81,8 +111,8 @@ check_access(['admin', 'petugas']);
 <main class="peminjaman-main">
     <div class="peminjaman-header">
         <div>
-            <h1>📑 Data Peminjaman Buku</h1>
-            <p>Pantau sirkulasi buku yang sedang dipinjam oleh anggota.</p>
+            <h1>Data Peminjaman</h1>
+            <p>Daftar transaksi peminjaman buku perpustakaan.</p>
         </div>
         <div class="peminjaman-header-actions">
             <button onclick="openModal('modalTambah')" class="peminjaman-btn-add">
@@ -92,14 +122,32 @@ check_access(['admin', 'petugas']);
         </div>
     </div>
 
+    <!-- Search Bar -->
+    <div style="margin-bottom: 1.5rem;">
+        <form method="GET" action="peminjaman.php" style="display: flex; gap: 0.5rem; max-width: 480px;">
+            <input type="text" name="search" placeholder="Cari judul buku, nama anggota..." 
+                   value="<?= htmlspecialchars($search); ?>"
+                   style="flex:1; padding: 0.625rem 1rem; border: 1px solid #d1d5db; border-radius: 0.5rem; font-size: 0.875rem; font-family: 'Inter', sans-serif;">
+            <button type="submit" class="peminjaman-btn-add" style="padding: 0.625rem 1rem;">
+                <span class="material-icons" style="font-size: 1.125rem;">search</span>
+            </button>
+            <?php if (!empty($search)): ?>
+            <a href="peminjaman.php" style="display:flex; align-items:center; padding: 0.625rem; color: #ef4444; text-decoration: none; border: 1px solid #fecaca; border-radius: 0.5rem;">
+                <span class="material-icons" style="font-size: 1.125rem;">close</span>
+            </a>
+            <?php endif; ?>
+        </form>
+    </div>
+
     <div class="peminjaman-table-wrapper">
         <div class="peminjaman-table-container">
             <table class="peminjaman-table">
                 <thead>
                     <tr>
-                        <th>ID Pinjam</th>
-                        <th>ID Anggota</th>
-                        <th>ISBN Buku</th>
+                        <th>No</th>
+                        <th>Judul Buku</th>
+                        <th>Nama Peminjam</th>
+                        <th>Petugas</th>
                         <th>Tgl Pinjam</th>
                         <th>Tgl Kembali</th>
                         <th class="text-center">Status</th>
@@ -108,44 +156,49 @@ check_access(['admin', 'petugas']);
                 </thead>
                 <tbody>
                     <?php
-                    $result = mysqli_query($conn, "SELECT * FROM peminjaman");
-                    if (mysqli_num_rows($result) > 0) {
-                        while ($row = mysqli_fetch_assoc($result)) {
+                    $no = 1;
+                    if ($result && mysqli_num_rows($result) > 0) {
+                        while ($row = mysqli_fetch_assoc($result)) :
                     ?>
                     <tr>
-                        <td class="font-bold">#<?php echo $row['ID_Peminjaman']; ?></td>
-                        <td class="font-medium"><?php echo $row['ID_Anggota']; ?></td>
-                        <td class="font-mono"><?php echo $row['isbn']; ?></td>
+                        <td class="font-bold"><?= $no++; ?></td>
+                        <td class="font-medium"><?= $row['judul']; ?></td>
+                        <td><?= $row['nama_anggota']; ?></td>
+                        <td class="text-muted"><?= $row['nama_petugas']; ?></td>
                         <td class="text-muted">
                             <div class="peminjaman-date-group">
                                 <span class="material-icons icon-success">calendar_today</span>
-                                <?php echo date('d M Y', strtotime($row['tgl_pinjam'])); ?>
+                                <?= date('d M Y', strtotime($row['tgl_pinjam'])); ?>
                             </div>
                         </td>
                         <td class="text-muted">
                             <div class="peminjaman-date-group font-semibold">
                                 <span class="material-icons icon-danger">event_busy</span>
-                                <?php echo ($row['tgl_kembali']) ? date('d M Y', strtotime($row['tgl_kembali'])) : '-'; ?>
+                                <?= ($row['tgl_kembali']) ? date('d M Y', strtotime($row['tgl_kembali'])) : '-'; ?>
                             </div>
                         </td>
                         <td class="text-center">
-                            <span class="peminjaman-badge <?php echo ($row['status'] == 'dipinjam') ? 'warning' : 'success'; ?>">
-                                <?php echo $row['status']; ?>
+                            <span class="peminjaman-badge <?= ($row['status'] == 'dipinjam') ? 'warning' : 'success'; ?>">
+                                <?= ucfirst($row['status']); ?>
                             </span>
                         </td>
                         <td class="text-right">
                             <div class="actions" style="display: flex; gap: 0.5rem; justify-content: flex-end; align-items: center;">
                                 <?php if($row['status'] == 'dipinjam'): ?>
-                                <button onclick='openEditModal(<?php echo json_encode($row); ?>)' class="peminjaman-btn-add">Kembalikan</button>
+                                <form action="crud/peminjaman/kembalikan.php" method="POST" style="display:inline;">
+                                    <input type="hidden" name="id_peminjaman" value="<?= $row['ID_Peminjaman']; ?>">
+                                    <button type="submit" onclick="return confirm('Yakin buku dikembalikan?')" class="peminjaman-btn-add">Kembalikan</button>
+                                </form>
+                                <?php else: ?>
+                                <span>-</span>
                                 <?php endif; ?>
-                                <a href="crud/peminjaman/peminjaman_hapus.php?id=<?php echo $row['ID_Peminjaman']; ?>" onclick="return confirm('Batalkan transaksi ini?')" class="pegawai-link-delete">Hapus</a>
                             </div>
                         </td>
                     </tr>
                     <?php 
-                        } 
+                        endwhile;
                     } else {
-                        echo "<tr><td colspan='7' class='peminjaman-empty'>Belum ada transaksi peminjaman.</td></tr>";
+                        echo "<tr><td colspan='8' class='peminjaman-empty'>Belum ada transaksi peminjaman.</td></tr>";
                     }
                     ?>
                 </tbody>
@@ -175,10 +228,10 @@ check_access(['admin', 'petugas']);
         // Fetch Members for dropdown
         $members = mysqli_query($conn, "SELECT ID_Anggota, Nama FROM anggota ORDER BY Nama ASC");
         
-        // Fetch Books for dropdown
-        $books = mysqli_query($conn, "SELECT isbn, judul FROM buku ORDER BY judul ASC");
+        // Fetch Books for dropdown (hanya yang stok > 0)
+        $books = mysqli_query($conn, "SELECT isbn, judul, stok FROM buku WHERE stok > 0 ORDER BY judul ASC");
         ?>
-        <form action="crud/peminjaman/peminjaman_tambah_aksi.php" method="post">
+        <form action="crud/peminjaman/simpan_peminjaman.php" method="post">
             <div style="margin-bottom: 1rem;">
                 <label class="form-group-label">ID Peminjaman (Otomatis)</label>
                 <input type="text" name="id_peminjaman" value="<?php echo $next_id; ?>" readonly class="input-readonly">
@@ -199,54 +252,23 @@ check_access(['admin', 'petugas']);
                 <select name="isbn" required>
                     <option value="">-- Pilih Buku --</option>
                     <?php while ($b = mysqli_fetch_array($books)) { ?>
-                        <option value="<?php echo $b['isbn']; ?>"><?php echo $b['judul'] . " (" . $b['isbn'] . ")"; ?></option>
+                        <option value="<?php echo $b['isbn']; ?>"><?php echo $b['judul'] . " (Stok: " . $b['stok'] . ")"; ?></option>
                     <?php } ?>
                 </select>
             </div>
 
-            <div class="form-row">
-                <div style="flex: 1;">
-                    <label class="form-group-label">Tgl Pinjam</label>
-                    <input type="date" name="tgl_pinjam" value="<?php echo date('Y-m-d'); ?>" required>
-                </div>
-                <div style="flex: 1;">
-                    <label class="form-group-label">Tgl Kembali (Opsional)</label>
-                    <input type="date" name="tgl_kembali">
-                </div>
+            <div style="margin-bottom: 1rem;">
+                <label class="form-group-label">Tgl Pinjam</label>
+                <input type="date" name="tgl_pinjam" value="<?php echo date('Y-m-d'); ?>" required>
             </div>
             <button type="submit">Simpan Peminjaman</button>
         </form>
     </div>
 </div>
 
-<!-- Modal Edit/Kembalikan Buku -->
-<div id="modalEdit" class="peminjaman-modal">
-    <div class="peminjaman-modal-overlay" onclick="closeModal('modalEdit')"></div>
-    <div class="peminjaman-modal-content">
-        <h2>Pengembalian Buku</h2>
-        <form action="crud/peminjaman/peminjaman_edit_aksi.php" method="post">
-            <input type="hidden" name="id_peminjaman" id="edit_id">
-            
-            <div style="margin-bottom: 1rem;">
-                <label class="form-group-label">ID Peminjaman</label>
-                <input type="text" id="edit_id_display" disabled class="input-readonly">
-            </div>
-
-            <div style="margin-bottom: 1rem;">
-                <label class="form-group-label">Tanggal Pengembalian</label>
-                <input type="date" name="tgl_kembali" id="edit_tgl_kembali" value="<?php echo date('Y-m-d'); ?>" required>
-                <p style="font-size: 0.75rem; color: #64748b; margin-top: 0.25rem;">Status akan otomatis berubah menjadi "dikembalikan".</p>
-            </div>
-
-            <button type="submit">Proses Pengembalian</button>
-            <button type="button" onclick="closeModal('modalEdit')" class="btn-cancel">Batal</button>
-        </form>
-    </div>
-</div>
-
 <footer class="peminjaman-footer">
     <div class="peminjaman-footer-content">
-        <p>© 2025 Perpustakaan Digital | All Rights Reserved</p>
+        <p>&copy; 2025 Perpustakaan Digital | All Rights Reserved</p>
     </div>
 </footer>
 
@@ -262,12 +284,6 @@ function openModal(id) {
 
 function closeModal(id) {
   document.getElementById(id).classList.remove('show');
-}
-
-function openEditModal(data) {
-  document.getElementById('edit_id').value = data.ID_Peminjaman;
-  document.getElementById('edit_id_display').value = data.ID_Peminjaman;
-  openModal('modalEdit');
 }
 </script>
 

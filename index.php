@@ -43,12 +43,12 @@ if (isset($_SESSION['login'])) {
       <div class="login-card">
       <!-- Logo and Header -->
         <div class="login-header">
-          <div class="login-logo">📚</div>
+          <div class="login-logo"><span class="material-symbols-outlined" style="font-size: inherit;">auto_stories</span></div>
           <h1 class="login-title">
                     Sistem Informasi Perpustakaan
                 </h1>
 <p class="login-subtitle">
-                    Selamat datang kembali, silakan login ke akun Anda
+                    Pegawai: Username + NIP | Anggota: NIS + NISN
                 </p>
         </div>
         <!-- Login Form -->
@@ -57,7 +57,7 @@ if (isset($_SESSION['login'])) {
           <div class="login-form-group">
             <input class="floating-label-input login-input" id="username" name="username" placeholder=" " type="text"/>
 <label class="login-label" for="username">
-                        Username atau Email
+                        Username / NIS
                     </label>
 </div>
 <!-- Password Field -->
@@ -71,7 +71,7 @@ if (isset($_SESSION['login'])) {
     />
 
     <label for="password" class="login-label">
-        Kata Sandi
+        NIP / NISN
     </label>
 
     <!-- ICON MATA -->

@@ -31,4 +31,18 @@ function get_user_greeting() {
     $level = ucfirst($_SESSION['level'] ?? 'User');
     return "Halo $nama ($level)";
 }
+
+/**
+ * Get current user's NIP (for pegawai/admin)
+ */
+function get_current_nip() {
+    return $_SESSION['nip'] ?? null;
+}
+
+/**
+ * Get current user's ID Anggota (for peminjam)
+ */
+function get_current_id_anggota() {
+    return $_SESSION['id_anggota'] ?? null;
+}
 ?>

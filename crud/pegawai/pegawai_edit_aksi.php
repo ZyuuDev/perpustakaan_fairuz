@@ -7,12 +7,14 @@ check_access(['admin']);
 // Menangkap data yang dikirim dari form
 $nip_lama = $_POST['nip_lama'];
 $nip_baru = $_POST['nip'];
-$nama = $_POST['nama'];
-$alamat = $_POST['alamat'];
-$gender = $_POST['gender'];
+$username = $_POST['username'];
+$nama     = $_POST['nama'];
+$alamat   = $_POST['alamat'];
+$gender   = $_POST['gender'];
+$level    = $_POST['level'];
 
 // Update data pegawai berdasarkan NIP lama
-$query = mysqli_query($conn, "UPDATE pegawai SET nip='$nip_baru', nama='$nama', alamat='$alamat', gender='$gender' WHERE nip='$nip_lama'");
+$query = mysqli_query($conn, "UPDATE pegawai SET nip='$nip_baru', username='$username', nama='$nama', alamat='$alamat', gender='$gender', level='$level' WHERE nip='$nip_lama'");
 
 if($query) {
     // Jika berhasil, balik ke halaman data pegawai

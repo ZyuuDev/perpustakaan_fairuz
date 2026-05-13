@@ -32,8 +32,9 @@ check_access(['admin']);
                 <a class="anggota-nav-link" href="dashboard.php">Dashboard</a>
                 <a class="anggota-nav-link" href="buku.php">Data Buku</a>
                 <a class="anggota-nav-link" href="pegawai.php">Data Pegawai</a>
-                <a class="anggota-nav-link" href="peminjaman.php">Peminjaman</a>
                 <a class="anggota-nav-link active" href="anggota.php">Data Anggota</a>
+                <a class="anggota-nav-link" href="peminjaman.php">Peminjaman</a>
+                <a class="anggota-nav-link" href="users.php">Data Users</a>
             </div>
         </div>
         <div class="anggota-navbar-right">
@@ -68,6 +69,7 @@ check_access(['admin']);
       <a href="pegawai.php">Data Pegawai</a>
       <a href="peminjaman.php">Peminjaman</a>
       <a href="anggota.php" class="active">Data Anggota</a>
+      <a href="users.php">Data Users</a>
       <div class="mobile-nav-divider"></div>
       <a href="auth/logout.php" style="color: #ef4444;">Logout</a>
     </nav>
@@ -77,8 +79,8 @@ check_access(['admin']);
 <main class="anggota-main">
     <div class="anggota-header">
         <div>
-            <h1>🧍‍♂️ Manajemen Data Anggota</h1>
-            <p>Daftar siswa atau pengunjung yang terdaftar sebagai anggota.</p>
+            <h1>Data Anggota</h1>
+            <p>Kelola daftar anggota yang terdaftar di perpustakaan.</p>
         </div>
         <div class="anggota-header-actions">
             <button onclick="openModal('modalTambah')" class="anggota-btn-add">
@@ -96,6 +98,7 @@ check_access(['admin']);
                         <th>ID Anggota</th>
                         <th>Nama Lengkap</th>
                         <th>NIS</th>
+                        <th>NISN</th>
                         <th>Alamat</th>
                         <th>No. Telepon</th>
                         <th class="text-right">Aksi</th>
@@ -111,6 +114,7 @@ check_access(['admin']);
                         <td class="font-bold">#<?php echo $row['ID_Anggota']; ?></td>
                         <td class="font-medium"><?php echo $row['Nama']; ?></td>
                         <td class="font-mono"><?php echo $row['NIS']; ?></td>
+                        <td class="font-mono"><?php echo $row['nisn']; ?></td>
                         <td class="text-muted"><?php echo $row['Alamat']; ?></td>
                         <td class="text-muted">
                             <div class="anggota-phone-group">
@@ -130,7 +134,7 @@ check_access(['admin']);
                     <?php 
                         } 
                     } else {
-                        echo "<tr><td colspan='6' class='anggota-empty'>Belum ada data anggota.</td></tr>";
+                        echo "<tr><td colspan='7' class='anggota-empty'>Belum ada data anggota.</td></tr>";
                     }
                     ?>
                 </tbody>
@@ -154,8 +158,12 @@ check_access(['admin']);
                 <input type="text" name="nama" placeholder="Nama Lengkap" required>
             </div>
             <div style="margin-bottom: 1rem;">
-                <label class="form-group-label">NIS</label>
+                <label class="form-group-label">NIS (sebagai username login)</label>
                 <input type="text" name="nis" placeholder="NIS" required>
+            </div>
+            <div style="margin-bottom: 1rem;">
+                <label class="form-group-label">NISN (sebagai password login)</label>
+                <input type="text" name="nisn" placeholder="NISN" required>
             </div>
             <div style="margin-bottom: 1rem;">
                 <label class="form-group-label">Alamat</label>
@@ -186,8 +194,12 @@ check_access(['admin']);
                 <input type="text" name="nama" id="edit_nama" placeholder="Nama Lengkap" required>
             </div>
             <div style="margin-bottom: 1rem;">
-                <label class="form-group-label">NIS</label>
+                <label class="form-group-label">NIS (sebagai username login)</label>
                 <input type="text" name="nis" id="edit_nis" placeholder="NIS" required>
+            </div>
+            <div style="margin-bottom: 1rem;">
+                <label class="form-group-label">NISN (sebagai password login)</label>
+                <input type="text" name="nisn" id="edit_nisn" placeholder="NISN" required>
             </div>
             <div style="margin-bottom: 1rem;">
                 <label class="form-group-label">Alamat</label>
@@ -228,6 +240,7 @@ function openEditModal(data) {
   document.getElementById('edit_id_display').value = data.ID_Anggota;
   document.getElementById('edit_nama').value = data.Nama;
   document.getElementById('edit_nis').value = data.NIS;
+  document.getElementById('edit_nisn').value = data.nisn;
   document.getElementById('edit_alamat').value = data.Alamat;
   document.getElementById('edit_nomor_hp').value = data.Nomor_HP;
   
