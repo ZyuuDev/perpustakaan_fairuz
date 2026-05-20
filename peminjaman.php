@@ -2,8 +2,6 @@
 include 'config/config.php';
 include 'config/auth_check.php';
 check_access(['admin', 'petugas']);
-
-// Query INNER JOIN sesuai instruksi guru
 $query = "SELECT p.ID_Peminjaman, b.judul, a.Nama AS nama_anggota, pg.nama AS nama_petugas,
                  p.tgl_pinjam, p.tgl_kembali, p.status
           FROM peminjaman p
@@ -11,10 +9,7 @@ $query = "SELECT p.ID_Peminjaman, b.judul, a.Nama AS nama_anggota, pg.nama AS na
           JOIN anggota a ON p.ID_Anggota = a.ID_Anggota
           JOIN pegawai pg ON p.nip_petugas = pg.nip
           ORDER BY p.ID_Peminjaman DESC";
-
 $result = mysqli_query($conn, $query);
-
-// Search functionality
 $search = isset($_GET['search']) ? $_GET['search'] : '';
 if (!empty($search)) {
     $search_escaped = mysqli_real_escape_string($conn, $search);
@@ -46,7 +41,6 @@ if (!empty($search)) {
     </style>
 </head>
 <body class="peminjaman-body">
-
 <nav class="peminjaman-navbar">
     <div class="peminjaman-navbar-container">
         <div class="peminjaman-navbar-left">
@@ -77,8 +71,6 @@ if (!empty($search)) {
         </div>
     </div>
 </nav>
-
-<!-- Mobile Menu -->
 <div class="mobile-menu" id="mobileMenu">
   <div class="mobile-menu-overlay" onclick="toggleMobileMenu()"></div>
   <div class="mobile-menu-content">
@@ -107,7 +99,6 @@ if (!empty($search)) {
     </nav>
   </div>
 </div>
-
 <main class="peminjaman-main">
     <div class="peminjaman-header">
         <div>
@@ -121,8 +112,6 @@ if (!empty($search)) {
             </button>
         </div>
     </div>
-
-    <!-- Search Bar -->
     <div style="margin-bottom: 1.5rem;">
         <form method="GET" action="peminjaman.php" style="display: flex; gap: 0.5rem; max-width: 480px;">
             <input type="text" name="search" placeholder="Cari judul buku, nama anggota..." 
@@ -138,7 +127,6 @@ if (!empty($search)) {
             <?php endif; ?>
         </form>
     </div>
-
     <div class="peminjaman-table-wrapper">
         <div class="peminjaman-table-container">
             <table class="peminjaman-table">
@@ -206,17 +194,13 @@ if (!empty($search)) {
         </div>
     </div>
 </main>
-
-<!-- Modal Pinjam Buku -->
 <div id="modalTambah" class="peminjaman-modal">
     <div class="peminjaman-modal-overlay" onclick="closeModal('modalTambah')"></div>
     <div class="peminjaman-modal-content">
         <h2>Pinjam Buku Baru</h2>
         <?php
-        // Auto-generate ID Peminjaman (e.g., A001, A002)
         $query_id = mysqli_query($conn, "SELECT ID_Peminjaman FROM peminjaman WHERE ID_Peminjaman LIKE 'A%' ORDER BY ID_Peminjaman DESC LIMIT 1");
         $last_id = mysqli_fetch_array($query_id);
-        
         if ($last_id) {
             $last_num = (int) substr($last_id['ID_Peminjaman'], 1);
             $next_num = $last_num + 1;
@@ -224,11 +208,7 @@ if (!empty($search)) {
         } else {
             $next_id = "A001";
         }
-        
-        // Fetch Members for dropdown
         $members = mysqli_query($conn, "SELECT ID_Anggota, Nama FROM anggota ORDER BY Nama ASC");
-        
-        // Fetch Books for dropdown (hanya yang stok > 0)
         $books = mysqli_query($conn, "SELECT isbn, judul, stok FROM buku WHERE stok > 0 ORDER BY judul ASC");
         ?>
         <form action="crud/peminjaman/simpan_peminjaman.php" method="post">
@@ -236,7 +216,6 @@ if (!empty($search)) {
                 <label class="form-group-label">ID Peminjaman (Otomatis)</label>
                 <input type="text" name="id_peminjaman" value="<?php echo $next_id; ?>" readonly class="input-readonly">
             </div>
-            
             <div style="margin-bottom: 1rem;">
                 <label class="form-group-label">Pilih Anggota</label>
                 <select name="id_anggota" required>
@@ -246,7 +225,6 @@ if (!empty($search)) {
                     <?php } ?>
                 </select>
             </div>
-
             <div style="margin-bottom: 1rem;">
                 <label class="form-group-label">Pilih Buku</label>
                 <select name="isbn" required>
@@ -256,7 +234,6 @@ if (!empty($search)) {
                     <?php } ?>
                 </select>
             </div>
-
             <div style="margin-bottom: 1rem;">
                 <label class="form-group-label">Tgl Pinjam</label>
                 <input type="date" name="tgl_pinjam" value="<?php echo date('Y-m-d'); ?>" required>
@@ -265,27 +242,22 @@ if (!empty($search)) {
         </form>
     </div>
 </div>
-
 <footer class="peminjaman-footer">
     <div class="peminjaman-footer-content">
         <p>&copy; 2025 Perpustakaan Digital | All Rights Reserved</p>
     </div>
 </footer>
-
 <script>
 function toggleMobileMenu() {
   const menu = document.getElementById('mobileMenu');
   menu.classList.toggle('show');
 }
-
 function openModal(id) {
   document.getElementById(id).classList.add('show');
 }
-
 function closeModal(id) {
   document.getElementById(id).classList.remove('show');
 }
 </script>
-
 </body>
 </html>

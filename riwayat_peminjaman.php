@@ -2,15 +2,13 @@
 include 'config/config.php';
 include 'config/auth_check.php';
 check_access(['peminjam']);
-
 $id_anggota = $_SESSION['id_anggota'];
 $nama = $_SESSION['nama'];
-
-// Riwayat peminjaman berdasarkan ID anggota yang login (INNER JOIN)
 $search_riwayat = isset($_GET['search_riwayat']) ? mysqli_real_escape_string($conn, $_GET['search_riwayat']) : '';
-$query_riwayat = "SELECT p.ID_Peminjaman, b.judul, p.tgl_pinjam, p.tgl_kembali, p.status
+$query_riwayat = "SELECT p.ID_Peminjaman, b.judul, p.tgl_pinjam, p.tgl_kembali, p.status, peg.nama AS nama_pegawai
                   FROM peminjaman p
                   JOIN buku b ON p.isbn = b.isbn
+                  LEFT JOIN pegawai peg ON p.nip_petugas = peg.nip
                   WHERE p.ID_Anggota = '$id_anggota'";
 if (!empty($search_riwayat)) {
     $query_riwayat .= " AND (b.judul LIKE '%$search_riwayat%' OR p.ID_Peminjaman LIKE '%$search_riwayat%')";
@@ -40,7 +38,6 @@ $result_riwayat = mysqli_query($conn, $query_riwayat);
     </style>
 </head>
 <body class="peminjaman-body">
-
 <nav class="peminjaman-navbar">
     <div class="peminjaman-navbar-container">
         <div class="peminjaman-navbar-left">
@@ -69,8 +66,6 @@ $result_riwayat = mysqli_query($conn, $query_riwayat);
         </div>
     </div>
 </nav>
-
-<!-- Mobile Menu -->
 <div class="mobile-menu" id="mobileMenu">
   <div class="mobile-menu-overlay" onclick="toggleMobileMenu()"></div>
   <div class="mobile-menu-content">
@@ -94,16 +89,28 @@ $result_riwayat = mysqli_query($conn, $query_riwayat);
     </nav>
   </div>
 </div>
-
 <main class="peminjaman-main">
-    <div class="peminjaman-header" style="margin-bottom: 2rem;">
+    <div style="background-color: #137fec; color: white; padding: 2rem; border-radius: 0.75rem; margin-bottom: 2rem; display: flex; align-items: center; gap: 1.25rem; box-shadow: 0 4px 6px -1px rgba(19, 127, 236, 0.2);">
+        <span class="material-icons" style="font-size: 3rem; opacity: 0.9; background: rgba(255,255,255,0.2); padding: 0.75rem; border-radius: 1rem;">history</span>
         <div>
-            <h1>Riwayat Peminjaman</h1>
-            <p>Daftar buku yang dipinjam dan dikembalikan.</p>
+            <h1 style="font-size: 1.8rem; margin: 0 0 0.5rem 0; font-weight: 700;">Riwayat Peminjaman</h1>
+            <p style="margin: 0; font-size: 1rem; opacity: 0.9;">
+                Daftar lengkap buku yang pernah Anda pinjam dan status pengembaliannya.
+            </p>
+        </div>
+    </div>
+    
+    <div style="background: white; padding: 1.5rem; border-radius: 0.75rem; margin-bottom: 2rem; border: 1px solid #e2e8f0; display: flex; gap: 3rem; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);">
+        <div>
+            <p style="color: #64748b; font-size: 0.875rem; margin: 0; display: flex; align-items: center; gap: 0.25rem;"><span class="material-icons" style="font-size: 1rem;">badge</span> Nomor Anggota</p>
+            <p style="font-weight: 700; color: #0f172a; margin: 0.25rem 0 0 0; font-size: 1.125rem;">#<?= htmlspecialchars($id_anggota); ?></p>
+        </div>
+        <div>
+            <p style="color: #64748b; font-size: 0.875rem; margin: 0; display: flex; align-items: center; gap: 0.25rem;"><span class="material-icons" style="font-size: 1rem;">person</span> Nama Peminjam</p>
+            <p style="font-weight: 700; color: #0f172a; margin: 0.25rem 0 0 0; font-size: 1.125rem;"><?= htmlspecialchars($nama); ?></p>
         </div>
     </div>
 
-    <!-- Search Section -->
     <div class="search-container">
         <form method="GET" action="riwayat_peminjaman.php" class="search-bar">
             <input type="text" name="search_riwayat" placeholder="Cari ID transaksi atau judul buku..." 
@@ -118,8 +125,6 @@ $result_riwayat = mysqli_query($conn, $query_riwayat);
             <?php endif; ?>
         </form>
     </div>
-
-    <!-- Tabel Riwayat -->
     <div class="riwayat-wrapper">
         <div class="peminjaman-table-container" style="box-shadow: none;">
             <table class="peminjaman-table">
@@ -130,6 +135,7 @@ $result_riwayat = mysqli_query($conn, $query_riwayat);
                         <th>Judul Buku</th>
                         <th>Tgl Pinjam</th>
                         <th>Tgl Kembali</th>
+                        <th>Petugas</th>
                         <th class="text-center">Status</th>
                     </tr>
                 </thead>
@@ -155,6 +161,12 @@ $result_riwayat = mysqli_query($conn, $query_riwayat);
                                 <?= ($row['tgl_kembali']) ? date('d M Y', strtotime($row['tgl_kembali'])) : '<span style="color:#ef4444; font-style:italic;">Belum dikembalikan</span>'; ?>
                             </div>
                         </td>
+                        <td class="text-muted">
+                            <div class="peminjaman-date-group" style="display: flex; align-items: center; gap: 0.25rem;">
+                                <span class="material-icons" style="font-size: 1rem; color: #64748b;">person</span>
+                                <?= ($row['nama_pegawai']) ? htmlspecialchars($row['nama_pegawai']) : '<span style="font-style:italic;">Tidak diketahui</span>'; ?>
+                            </div>
+                        </td>
                         <td class="text-center">
                             <span class="peminjaman-badge <?= ($row['status'] == 'dipinjam') ? 'warning' : 'success'; ?>">
                                 <?= ($row['status'] == 'dipinjam') ? 'Sedang Dipinjam' : 'Dikembalikan'; ?>
@@ -164,7 +176,7 @@ $result_riwayat = mysqli_query($conn, $query_riwayat);
                     <?php 
                         endwhile;
                     } else {
-                        echo "<tr><td colspan='6' style='text-align:center; padding: 3rem; color: #64748b;'>Belum ada data riwayat peminjaman.</td></tr>";
+                        echo "<tr><td colspan='7' style='text-align:center; padding: 3rem; color: #64748b;'>Belum ada data riwayat peminjaman.</td></tr>";
                     }
                     ?>
                 </tbody>
@@ -172,18 +184,15 @@ $result_riwayat = mysqli_query($conn, $query_riwayat);
         </div>
     </div>
 </main>
-
 <footer class="peminjaman-footer" style="margin-top: 4rem;">
     <div class="peminjaman-footer-content">
         <p>&copy; 2025 Perpustakaan Digital | All Rights Reserved</p>
     </div>
 </footer>
-
 <script>
 function toggleMobileMenu() {
     document.getElementById('mobileMenu').classList.toggle('show');
 }
 </script>
-
 </body>
 </html>

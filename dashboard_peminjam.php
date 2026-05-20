@@ -2,21 +2,14 @@
 include 'config/config.php';
 include 'config/auth_check.php';
 check_access(['peminjam']);
-
 $id_anggota = $_SESSION['id_anggota'];
 $nama = $_SESSION['nama'];
-
-// Count stats
 $count_pinjam = mysqli_query($conn, "SELECT COUNT(*) as total FROM peminjaman WHERE ID_Anggota = '$id_anggota' AND status = 'dipinjam'");
 $stat_pinjam = mysqli_fetch_assoc($count_pinjam)['total'];
-
 $count_total = mysqli_query($conn, "SELECT COUNT(*) as total FROM peminjaman WHERE ID_Anggota = '$id_anggota'");
 $stat_total = mysqli_fetch_assoc($count_total)['total'];
-
 $count_buku = mysqli_query($conn, "SELECT COUNT(*) as total FROM buku WHERE stok > 0");
 $stat_buku = mysqli_fetch_assoc($count_buku)['total'];
-
-// Buku Rekomendasi (Terbaru)
 $buku_rekomendasi = mysqli_query($conn, "SELECT * FROM buku WHERE stok > 0 ORDER BY judul ASC LIMIT 4");
 ?>
 <!DOCTYPE html>
@@ -85,7 +78,6 @@ $buku_rekomendasi = mysqli_query($conn, "SELECT * FROM buku WHERE stok > 0 ORDER
     </style>
 </head>
 <body class="peminjaman-body">
-
 <nav class="peminjaman-navbar">
     <div class="peminjaman-navbar-container">
         <div class="peminjaman-navbar-left">
@@ -114,8 +106,6 @@ $buku_rekomendasi = mysqli_query($conn, "SELECT * FROM buku WHERE stok > 0 ORDER
         </div>
     </div>
 </nav>
-
-<!-- Mobile Menu -->
 <div class="mobile-menu" id="mobileMenu">
   <div class="mobile-menu-overlay" onclick="toggleMobileMenu()"></div>
   <div class="mobile-menu-content">
@@ -139,9 +129,7 @@ $buku_rekomendasi = mysqli_query($conn, "SELECT * FROM buku WHERE stok > 0 ORDER
     </nav>
   </div>
 </div>
-
 <main class="peminjaman-main">
-    <!-- Hero Section -->
     <div style="background-color: #137fec; color: white; padding: 2rem; border-radius: 0.5rem; margin-bottom: 2rem;">
         <div>
             <h1 style="font-size: 1.8rem; margin: 0 0 0.5rem 0;">Selamat Datang, <?= htmlspecialchars($nama); ?></h1>
@@ -158,8 +146,6 @@ $buku_rekomendasi = mysqli_query($conn, "SELECT * FROM buku WHERE stok > 0 ORDER
             </div>
         </div>
     </div>
-
-    <!-- Stats -->
     <div class="anggota-dashboard-stats">
         <div class="stat-card">
             <div class="stat-icon amber">
@@ -189,8 +175,6 @@ $buku_rekomendasi = mysqli_query($conn, "SELECT * FROM buku WHERE stok > 0 ORDER
             </div>
         </div>
     </div>
-
-    <!-- Recommendation Section -->
     <div style="margin-top: 2rem;">
         <h2 class="section-title">
             Buku Tersedia
@@ -216,18 +200,15 @@ $buku_rekomendasi = mysqli_query($conn, "SELECT * FROM buku WHERE stok > 0 ORDER
         </div>
     </div>
 </main>
-
 <footer class="peminjaman-footer" style="margin-top: 4rem;">
     <div class="peminjaman-footer-content">
         <p>&copy; 2025 Perpustakaan Digital | All Rights Reserved</p>
     </div>
 </footer>
-
 <script>
 function toggleMobileMenu() {
     document.getElementById('mobileMenu').classList.toggle('show');
 }
 </script>
-
 </body>
 </html>

@@ -18,7 +18,6 @@ check_access(['admin', 'petugas']);
     </style>
 </head>
 <body class="buku-body">
-
 <nav class="buku-navbar">
     <div class="buku-navbar-container">
         <div class="buku-navbar-left">
@@ -51,8 +50,6 @@ check_access(['admin', 'petugas']);
         </div>
     </div>
 </nav>
-
-<!-- Mobile Menu -->
 <div class="mobile-menu" id="mobileMenu">
   <div class="mobile-menu-overlay" onclick="toggleMobileMenu()"></div>
   <div class="mobile-menu-content">
@@ -85,7 +82,6 @@ check_access(['admin', 'petugas']);
     </nav>
   </div>
 </div>
-
 <main class="buku-main">
     <div class="buku-header">
         <div>
@@ -99,8 +95,6 @@ check_access(['admin', 'petugas']);
         </button>
         <?php endif; ?>
     </div>
-
-    <!-- Search Bar -->
     <?php
     $search_buku = isset($_GET['search']) ? mysqli_real_escape_string($conn, $_GET['search']) : '';
     ?>
@@ -119,7 +113,6 @@ check_access(['admin', 'petugas']);
             <?php endif; ?>
         </form>
     </div>
-
     <div class="buku-table-wrapper">
         <div class="buku-table-container">
             <table class="buku-table">
@@ -138,7 +131,7 @@ check_access(['admin', 'petugas']);
                 <tbody>
                     <?php
                     if (!empty($search_buku)) {
-                        $result = mysqli_query($conn, "SELECT * FROM buku WHERE judul LIKE '%$search_buku%' OR pengarang LIKE '%$search_buku%' OR penerbit LIKE '%$search_buku%' OR isbn LIKE '%$search_buku%' ORDER BY judul ASC");
+                        $result = mysqli_query($conn, "SELECT * FROM buku WHERE judul LIKE '%$search_buku%' OR pengarang LIKE '%$search_buku%' OR penerbit LIKE '%$search_buku%' OR isbn LIKE '%$search_buku%' OR genre LIKE '%$search_buku%' ORDER BY judul ASC");
                     } else {
                         $result = mysqli_query($conn, "SELECT * FROM buku ORDER BY judul ASC");
                     }
@@ -160,9 +153,6 @@ check_access(['admin', 'petugas']);
                         <?php if ($_SESSION['level'] == 'admin'): ?>
                         <td class="text-right">
                             <div class="actions">
-                                <button 
-                                    onclick='openTambahStokModal(<?php echo json_encode($row); ?>)' 
-                                    class="buku-link-edit" style="background: #10b981; color: white; border-color: #059669;">+ Stok</button>
                                 <button                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        
                                     onclick='openEditModal(<?php echo json_encode($row); ?>)' 
                                     class="buku-link-edit">Edit</button>
@@ -184,7 +174,6 @@ check_access(['admin', 'petugas']);
         </div>
     </div>
 </main>
-
 <div id="modalTambah" class="buku-modal">
     <div class="buku-modal-overlay" onclick="closeModal('modalTambah')"></div>
     <div class="buku-modal-content">
@@ -211,11 +200,23 @@ check_access(['admin', 'petugas']);
             <div class="form-row">
                 <div style="margin-bottom: 1rem;">
                     <label class="form-group-label">Tahun</label>
-                    <input type="text" name="tahun" placeholder="Tahun">
+                    <input type="number" name="tahun" placeholder="Tahun" max="<?= date('Y'); ?>" required>
                 </div>
                 <div style="margin-bottom: 1rem;">
                     <label class="form-group-label">Genre</label>
-                    <input type="text" name="genre" placeholder="Genre">
+                    <select name="genre" required>
+                        <option value="Fiksi">Fiksi</option>
+                        <option value="Non-Fiksi">Non-Fiksi</option>
+                        <option value="Sains & Teknologi">Sains & Teknologi</option>
+                        <option value="Sejarah">Sejarah</option>
+                        <option value="Sastra">Sastra</option>
+                        <option value="Biografi">Biografi</option>
+                        <option value="Agama">Agama</option>
+                        <option value="Pelajaran">Pelajaran</option>
+                        <option value="Komik">Komik</option>
+                        <option value="Novel">Novel</option>
+                        <option value="Lainnya">Lainnya</option>
+                    </select>
                 </div>
             </div>
             <div style="margin-bottom: 1rem;">
@@ -226,24 +227,20 @@ check_access(['admin', 'petugas']);
         </form>
     </div>
 </div>
-
 <div id="modalEdit" class="buku-modal">
     <div class="buku-modal-overlay" onclick="closeModal('modalEdit')"></div>
     <div class="buku-modal-content">
         <h2 class="text-primary">Edit Data Buku</h2>
         <form action="crud/buku/buku_edit_aksi.php" method="post">
             <input type="hidden" name="id" id="edit_id">
-            
             <div class="form-group">
                 <label>ISBN (ID Tetap)</label>
                 <input type="text" id="edit_isbn_display" disabled>
             </div>
-            
             <div class="form-group">
                 <label>Judul Buku</label>
                 <input type="text" name="judul" id="edit_judul" required>
             </div>
-
             <div class="form-row">
                 <div>
                     <label>Pengarang</label>
@@ -254,15 +251,26 @@ check_access(['admin', 'petugas']);
                     <input type="text" name="penerbit" id="edit_penerbit">
                 </div>
             </div>
-
             <div class="form-row">
                 <div>
                     <label>Tahun</label>
-                    <input type="text" name="tahun" id="edit_tahun">
+                    <input type="number" name="tahun" id="edit_tahun" max="<?= date('Y'); ?>" required>
                 </div>
                 <div>
                     <label>Genre</label>
-                    <input type="text" name="genre" id="edit_genre">
+                    <select name="genre" id="edit_genre" required>
+                        <option value="Fiksi">Fiksi</option>
+                        <option value="Non-Fiksi">Non-Fiksi</option>
+                        <option value="Sains & Teknologi">Sains & Teknologi</option>
+                        <option value="Sejarah">Sejarah</option>
+                        <option value="Sastra">Sastra</option>
+                        <option value="Biografi">Biografi</option>
+                        <option value="Agama">Agama</option>
+                        <option value="Pelajaran">Pelajaran</option>
+                        <option value="Komik">Komik</option>
+                        <option value="Novel">Novel</option>
+                        <option value="Lainnya">Lainnya</option>
+                    </select>
                 </div>
             </div>
             <div class="form-group" style="margin-top: 1rem;">
@@ -274,7 +282,6 @@ check_access(['admin', 'petugas']);
         </form>
     </div>
 </div>
-
 <div id="modalTambahStok" class="buku-modal">
     <div class="buku-modal-overlay" onclick="closeModal('modalTambahStok')"></div>
     <div class="buku-modal-content" style="max-width: 400px;">
@@ -291,24 +298,20 @@ check_access(['admin', 'petugas']);
         </form>
     </div>
 </div>
-
 <script>
     // Toggle Mobile Menu
     function toggleMobileMenu() {
         const menu = document.getElementById('mobileMenu');
         menu.classList.toggle('show');
     }
-
     // Buka Modal
     function openModal(id) {
         document.getElementById(id).classList.add('show');
     }
-
     // Tutup Modal
     function closeModal(id) {
         document.getElementById(id).classList.remove('show');
     }
-
     // Fungsi Khusus Edit Modal untuk Mengisi Data Otomatis
     function openEditModal(data) {
         document.getElementById('edit_id').value = data.isbn;
@@ -319,23 +322,18 @@ check_access(['admin', 'petugas']);
         document.getElementById('edit_tahun').value = data.tahun;
         document.getElementById('edit_genre').value = data.genre;
         document.getElementById('edit_stok').value = data.stok;
-        
         openModal('modalEdit');
     }
-
     function openTambahStokModal(data) {
         document.getElementById('tambah_stok_isbn').value = data.isbn;
         document.getElementById('tambah_stok_judul').innerText = data.judul + " (Stok saat ini: " + data.stok + ")";
-        
         openModal('modalTambahStok');
     }
 </script>
-
 <footer class="buku-footer">
     <div class="buku-footer-content">
         <p>© 2025 Perpustakaan Digital | All Rights Reserved</p>
     </div>
 </footer>
-
 </body>
 </html>

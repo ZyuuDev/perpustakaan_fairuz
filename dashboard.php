@@ -1,8 +1,6 @@
 <?php include 'config/config.php';
 include 'config/auth_check.php';
-check_access(); // Basic check to ensure logged in
-
-// Redirect peminjam ke dashboard mereka sendiri
+check_access(); 
 if ($_SESSION['level'] == 'peminjam') {
     header("Location: dashboard_peminjam.php");
     exit;
@@ -83,7 +81,6 @@ if ($_SESSION['level'] == 'peminjam') {
         </div>
         <span class="dashboard-brand-text">Perpustakaan</span>
         </div>
-
     <div class="dashboard-nav-links">
         <a class="dashboard-nav-link active" href="dashboard.php">Dashboard</a>
         <a class="dashboard-nav-link" href="buku.php">Data Buku</a>
@@ -99,7 +96,6 @@ if ($_SESSION['level'] == 'peminjam') {
         <?php endif; ?>
       </div>
     </div>
-
     <div style="display: flex; align-items: center; gap: 0.5rem;">
       <a href="auth/logout.php" class="dashboard-logout-btn" title="Logout">
         <span class="material-icons">logout</span>
@@ -110,8 +106,6 @@ if ($_SESSION['level'] == 'peminjam') {
     </div>
   </div>
 </nav>
-
-<!-- Mobile Menu -->
 <div class="mobile-menu" id="mobileMenu">
   <div class="mobile-menu-overlay" onclick="toggleMobileMenu()"></div>
   <div class="mobile-menu-content">
@@ -144,7 +138,6 @@ if ($_SESSION['level'] == 'peminjam') {
     </nav>
   </div>
 </div>
-
 <main class="dashboard-container">
   <section class="dashboard-hero">
     <div class="dashboard-hero-content">
@@ -164,8 +157,6 @@ if ($_SESSION['level'] == 'peminjam') {
       <?php endif; ?>
     </div>
   </section>
-
-  <!-- Stats Section -->
   <?php
     $c_buku = mysqli_fetch_assoc(mysqli_query($conn, "SELECT SUM(stok) as t FROM buku"))['t'] ?? 0;
     $c_pinjam = mysqli_fetch_assoc(mysqli_query($conn, "SELECT COUNT(*) as t FROM peminjaman WHERE status='dipinjam'"))['t'] ?? 0;
@@ -204,7 +195,6 @@ if ($_SESSION['level'] == 'peminjam') {
       </div>
       <?php endif; ?>
   </div>
-
   <section class="dashboard-card-grid">
     <div class="dashboard-card" style="border-top: 4px solid var(--primary);">
       <div class="dashboard-card-header">
@@ -215,7 +205,6 @@ if ($_SESSION['level'] == 'peminjam') {
         Selalu pastikan untuk mengecek stok buku yang tersedia sebelum menyetujui peminjaman. Stok akan otomatis berkurang ketika buku dipinjam, dan otomatis bertambah ketika buku dikembalikan.
       </p>
     </div>
-
     <div class="dashboard-card" style="border-top: 4px solid #10b981;">
       <div class="dashboard-card-header">
         <span class="material-icons" style="background: #d1fae5; color: #059669;">tips_and_updates</span>
@@ -232,18 +221,14 @@ if ($_SESSION['level'] == 'peminjam') {
     </div>
   </section>
 </main>
-
 <footer class="dashboard-footer">
   <p>© 2025 Perpustakaan Digital | All Rights Reserved</p>
 </footer>
-
 <script>
 function toggleMobileMenu() {
   const menu = document.getElementById('mobileMenu');
   menu.classList.toggle('show');
 }
 </script>
-
 </body>
-
 </html>

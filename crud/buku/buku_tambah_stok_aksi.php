@@ -2,16 +2,12 @@
 session_start();
 include '../../config/config.php';
 include '../../config/auth_check.php';
-check_access(['admin']); // Hanya admin yang bisa tambah stok langsung
-
+check_access(['admin']); 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $isbn = mysqli_real_escape_string($conn, $_POST['isbn']);
     $jumlah_tambah = (int)$_POST['jumlah_tambah'];
-
     if ($jumlah_tambah > 0) {
-        // Query to update the stock
         $query = "UPDATE buku SET stok = stok + $jumlah_tambah WHERE isbn = '$isbn'";
-        
         if (mysqli_query($conn, $query)) {
             echo "<script>
                 alert('Stok buku berhasil ditambahkan!');

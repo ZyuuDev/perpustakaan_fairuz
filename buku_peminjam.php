@@ -2,12 +2,10 @@
 include 'config/config.php';
 include 'config/auth_check.php';
 check_access(['peminjam']);
-
 $nama = $_SESSION['nama'];
 $search_buku = isset($_GET['search_buku']) ? mysqli_real_escape_string($conn, $_GET['search_buku']) : '';
-
 if (!empty($search_buku)) {
-    $result_buku = mysqli_query($conn, "SELECT * FROM buku WHERE judul LIKE '%$search_buku%' OR pengarang LIKE '%$search_buku%' OR genre LIKE '%$search_buku%' ORDER BY judul ASC");
+    $result_buku = mysqli_query($conn, "SELECT * FROM buku WHERE judul LIKE '%$search_buku%' OR pengarang LIKE '%$search_buku%' OR penerbit LIKE '%$search_buku%' OR isbn LIKE '%$search_buku%' OR genre LIKE '%$search_buku%' ORDER BY judul ASC");
 } else {
     $result_buku = mysqli_query($conn, "SELECT * FROM buku ORDER BY judul ASC");
 }
@@ -43,7 +41,6 @@ if (!empty($search_buku)) {
     </style>
 </head>
 <body class="peminjaman-body">
-
 <nav class="peminjaman-navbar">
     <div class="peminjaman-navbar-container">
         <div class="peminjaman-navbar-left">
@@ -72,8 +69,6 @@ if (!empty($search_buku)) {
         </div>
     </div>
 </nav>
-
-<!-- Mobile Menu -->
 <div class="mobile-menu" id="mobileMenu">
   <div class="mobile-menu-overlay" onclick="toggleMobileMenu()"></div>
   <div class="mobile-menu-content">
@@ -97,16 +92,16 @@ if (!empty($search_buku)) {
     </nav>
   </div>
 </div>
-
 <main class="peminjaman-main">
-    <div class="peminjaman-header" style="margin-bottom: 2rem;">
+    <div style="background-color: #137fec; color: white; padding: 2rem; border-radius: 0.75rem; margin-bottom: 2rem; display: flex; align-items: center; gap: 1.25rem; box-shadow: 0 4px 6px -1px rgba(19, 127, 236, 0.2);">
+        <span class="material-icons" style="font-size: 3rem; opacity: 0.9; background: rgba(255,255,255,0.2); padding: 0.75rem; border-radius: 1rem;">menu_book</span>
         <div>
-            <h1>Daftar Buku</h1>
-            <p>Silahkan cari buku yang tersedia.</p>
+            <h1 style="font-size: 1.8rem; margin: 0 0 0.5rem 0; font-weight: 700;">Daftar Buku</h1>
+            <p style="margin: 0; font-size: 1rem; opacity: 0.9;">
+                Jelajahi dan cari koleksi buku yang tersedia di perpustakaan.
+            </p>
         </div>
     </div>
-
-    <!-- Search Section -->
     <div class="search-container">
         <form method="GET" action="buku_peminjam.php" class="search-bar">
             <input type="text" name="search_buku" placeholder="Ketik judul buku, pengarang, penerbit, atau genre..." 
@@ -121,15 +116,12 @@ if (!empty($search_buku)) {
             <?php endif; ?>
         </form>
     </div>
-
     <?php if (!empty($search_buku)): ?>
     <p style="font-size: 1rem; color: #64748b; margin-bottom: 1.5rem; font-weight: 500;">
         Hasil pencarian untuk: <strong style="color: #0f172a;">"<?= htmlspecialchars($search_buku); ?>"</strong> 
         <span style="background: #e2e8f0; padding: 0.25rem 0.5rem; border-radius: 999px; font-size: 0.75rem; margin-left: 0.5rem;"><?= mysqli_num_rows($result_buku); ?> ditemukan</span>
     </p>
     <?php endif; ?>
-
-    <!-- Grid Buku -->
     <div class="book-grid">
         <?php 
         if (mysqli_num_rows($result_buku) > 0) {
@@ -163,18 +155,15 @@ if (!empty($search_buku)) {
         ?>
     </div>
 </main>
-
 <footer class="peminjaman-footer" style="margin-top: 4rem;">
     <div class="peminjaman-footer-content">
         <p>&copy; 2025 Perpustakaan Digital | All Rights Reserved</p>
     </div>
 </footer>
-
 <script>
 function toggleMobileMenu() {
     document.getElementById('mobileMenu').classList.toggle('show');
 }
 </script>
-
 </body>
 </html>

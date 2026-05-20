@@ -18,7 +18,6 @@ check_access(['admin']);
     </style>
 </head>
 <body class="anggota-body">
-
 <nav class="anggota-navbar">
     <div class="anggota-navbar-container">
         <div class="anggota-navbar-left">
@@ -47,8 +46,6 @@ check_access(['admin']);
         </div>
     </div>
 </nav>
-
-<!-- Mobile Menu -->
 <div class="mobile-menu" id="mobileMenu">
   <div class="mobile-menu-overlay" onclick="toggleMobileMenu()"></div>
   <div class="mobile-menu-content">
@@ -75,7 +72,6 @@ check_access(['admin']);
     </nav>
   </div>
 </div>
-
 <main class="anggota-main">
     <div class="anggota-header">
         <div>
@@ -89,7 +85,6 @@ check_access(['admin']);
             </button>
         </div>
     </div>
-
     <div class="anggota-table-wrapper">
         <div class="anggota-table-container">
             <table class="anggota-table">
@@ -142,8 +137,6 @@ check_access(['admin']);
         </div>
     </div>
 </main>
-
-<!-- Modal Tambah Anggota -->
 <div id="modalTambah" class="anggota-modal">
     <div class="anggota-modal-overlay" onclick="closeModal('modalTambah')"></div>
     <div class="anggota-modal-content">
@@ -177,8 +170,6 @@ check_access(['admin']);
         </form>
     </div>
 </div>
-
-<!-- Modal Edit Anggota -->
 <div id="modalEdit" class="anggota-modal">
     <div class="anggota-modal-overlay" onclick="closeModal('modalEdit')"></div>
     <div class="anggota-modal-content">
@@ -214,27 +205,22 @@ check_access(['admin']);
         </form>
     </div>
 </div>
-
 <footer class="anggota-footer">
     <div class="anggota-footer-content">
         <p>© 2025 Perpustakaan Digital | All Rights Reserved</p>
     </div>
 </footer>
-
 <script>
 function toggleMobileMenu() {
   const menu = document.getElementById('mobileMenu');
   menu.classList.toggle('show');
 }
-
 function openModal(id) {
   document.getElementById(id).classList.add('show');
 }
-
 function closeModal(id) {
   document.getElementById(id).classList.remove('show');
 }
-
 function openEditModal(data) {
   document.getElementById('edit_id').value = data.ID_Anggota;
   document.getElementById('edit_id_display').value = data.ID_Anggota;
@@ -243,10 +229,8 @@ function openEditModal(data) {
   document.getElementById('edit_nisn').value = data.nisn;
   document.getElementById('edit_alamat').value = data.Alamat;
   document.getElementById('edit_nomor_hp').value = data.Nomor_HP;
-  
   openModal('modalEdit');
 }
 </script>
-
 </body>
 </html>

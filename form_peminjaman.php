@@ -3,13 +3,8 @@ session_start();
 include 'config/config.php';
 include 'config/auth_check.php';
 check_access(['admin', 'petugas']);
-
-// Query data buku (hanya stok > 0)
 $buku = mysqli_query($conn, "SELECT isbn, judul, stok FROM buku WHERE stok > 0 ORDER BY judul ASC");
-// Query data anggota
 $anggota = mysqli_query($conn, "SELECT ID_Anggota, Nama FROM anggota ORDER BY Nama ASC");
-
-// Auto-generate ID Peminjaman
 $query_id = mysqli_query($conn, "SELECT ID_Peminjaman FROM peminjaman WHERE ID_Peminjaman LIKE 'A%' ORDER BY ID_Peminjaman DESC LIMIT 1");
 $last_id = mysqli_fetch_array($query_id);
 if ($last_id) {
@@ -34,7 +29,6 @@ if ($last_id) {
     </style>
 </head>
 <body class="peminjaman-body">
-
 <nav class="peminjaman-navbar">
     <div class="peminjaman-navbar-container">
         <div class="peminjaman-navbar-left">
@@ -64,8 +58,6 @@ if ($last_id) {
         </div>
     </div>
 </nav>
-
-<!-- Mobile Menu -->
 <div class="mobile-menu" id="mobileMenu">
   <div class="mobile-menu-overlay" onclick="toggleMobileMenu()"></div>
   <div class="mobile-menu-content">
@@ -93,7 +85,6 @@ if ($last_id) {
     </nav>
   </div>
 </div>
-
 <main class="peminjaman-main">
     <div class="peminjaman-header">
         <div>
@@ -107,7 +98,6 @@ if ($last_id) {
             </a>
         </div>
     </div>
-
     <div style="max-width: 560px;">
         <div class="peminjaman-table-wrapper" style="padding: 2rem;">
             <form action="crud/peminjaman/simpan_peminjaman.php" method="POST">
@@ -117,8 +107,6 @@ if ($last_id) {
                            class="input-readonly"
                            style="width:100%; padding: 0.625rem; border: 1px solid #d1d5db; border-radius: 0.5rem; background: #f1f5f9; font-family: 'Inter', sans-serif;">
                 </div>
-
-                <!-- Buku -->
                 <div style="margin-bottom: 1.25rem;">
                     <label class="form-group-label">Judul Buku</label>
                     <select name="isbn" required style="width:100%; padding: 0.625rem; border: 1px solid #d1d5db; border-radius: 0.5rem; font-family: 'Inter', sans-serif;">
@@ -130,8 +118,6 @@ if ($last_id) {
                         <?php endwhile; ?>
                     </select>
                 </div>
-
-                <!-- Peminjam / Anggota -->
                 <div style="margin-bottom: 1.25rem;">
                     <label class="form-group-label">Nama Peminjam</label>
                     <select name="id_anggota" required style="width:100%; padding: 0.625rem; border: 1px solid #d1d5db; border-radius: 0.5rem; font-family: 'Inter', sans-serif;">
@@ -143,14 +129,11 @@ if ($last_id) {
                         <?php endwhile; ?>
                     </select>
                 </div>
-
-                <!-- Tanggal -->
                 <div style="margin-bottom: 1.25rem;">
                     <label class="form-group-label">Tanggal Mulai</label>
                     <input type="date" name="tgl_pinjam" value="<?= date('Y-m-d'); ?>" required
                            style="width:100%; padding: 0.625rem; border: 1px solid #d1d5db; border-radius: 0.5rem; font-family: 'Inter', sans-serif;">
                 </div>
-
                 <button type="submit" 
                         style="width:100%; background: var(--primary, #137fec); color: white; font-weight: 700; padding: 0.75rem; border-radius: 0.5rem; border: none; cursor: pointer; font-size: 0.9375rem; font-family: 'Inter', sans-serif;">
                     Simpan Peminjaman
@@ -159,19 +142,16 @@ if ($last_id) {
         </div>
     </div>
 </main>
-
 <footer class="peminjaman-footer">
     <div class="peminjaman-footer-content">
         <p>&copy; 2025 Perpustakaan Digital | All Rights Reserved</p>
     </div>
 </footer>
-
 <script>
 function toggleMobileMenu() {
   const menu = document.getElementById('mobileMenu');
   menu.classList.toggle('show');
 }
 </script>
-
 </body>
 </html>

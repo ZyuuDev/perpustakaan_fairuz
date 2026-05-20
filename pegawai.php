@@ -18,7 +18,6 @@ check_access(['admin']);
     </style>
 </head>
 <body class="pegawai-body">
-
 <nav class="pegawai-navbar">
     <div class="pegawai-navbar-container">
         <div class="pegawai-navbar-left">
@@ -47,8 +46,6 @@ check_access(['admin']);
         </div>
     </div>
 </nav>
-
-<!-- Mobile Menu -->
 <div class="mobile-menu" id="mobileMenu">
   <div class="mobile-menu-overlay" onclick="toggleMobileMenu()"></div>
   <div class="mobile-menu-content">
@@ -75,7 +72,6 @@ check_access(['admin']);
     </nav>
   </div>
 </div>
-
 <main class="pegawai-main">
     <div class="pegawai-header">
         <div>
@@ -89,7 +85,6 @@ check_access(['admin']);
             </button>
         </div>
     </div>
-
     <div class="pegawai-table-wrapper">
         <div class="pegawai-table-container">
             <table class="pegawai-table">
@@ -145,8 +140,6 @@ check_access(['admin']);
         </div>
     </div>
 </main>
-
-<!-- Modal Tambah Pegawai -->
 <div id="modalTambah" class="pegawai-modal">
     <div class="pegawai-modal-overlay" onclick="closeModal('modalTambah')"></div>
     <div class="pegawai-modal-content">
@@ -187,8 +180,6 @@ check_access(['admin']);
         </form>
     </div>
 </div>
-
-<!-- Modal Edit Pegawai -->
 <div id="modalEdit" class="pegawai-modal">
     <div class="pegawai-modal-overlay" onclick="closeModal('modalEdit')"></div>
     <div class="pegawai-modal-content">
@@ -230,27 +221,22 @@ check_access(['admin']);
         </form>
     </div>
 </div>
-
 <footer class="pegawai-footer">
     <div class="pegawai-footer-content">
         <p>© 2025 Perpustakaan Digital | All Rights Reserved</p>
     </div>
 </footer>
-
 <script>
 function toggleMobileMenu() {
   const menu = document.getElementById('mobileMenu');
   menu.classList.toggle('show');
 }
-
 function openModal(id) {
   document.getElementById(id).classList.add('show');
 }
-
 function closeModal(id) {
   document.getElementById(id).classList.remove('show');
 }
-
 function openEditModal(data) {
   document.getElementById('edit_nip_lama').value = data.nip;
   document.getElementById('edit_nip').value = data.nip;
@@ -259,10 +245,8 @@ function openEditModal(data) {
   document.getElementById('edit_alamat_pegawai').value = data.alamat;
   document.getElementById('edit_gender').value = data.gender;
   document.getElementById('edit_level').value = data.level;
-  
   openModal('modalEdit');
 }
 </script>
-
 </body>
 </html>
