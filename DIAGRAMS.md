@@ -4,6 +4,8 @@ Berikut adalah DFD Level 0, Flowchart Sistem, Use Case Diagram, Activity Diagram
 
 ## 1. DFD Level 0 (Context Diagram)
 
+![DFD Level 0](assets/diagrams/diagram_1.png)
+
 ```mermaid
 graph TD
     Anggota([Anggota]) -- Data Pendaftaran, Kredensial Login, Permintaan Peminjaman --> SIP[Sistem Informasi Perpustakaan]
@@ -17,6 +19,8 @@ graph TD
 ```
 
 ## 2. Flowchart Sistem (Alur Peminjaman Buku)
+
+![Flowchart](assets/diagrams/diagram_2.png)
 
 ```mermaid
 flowchart TD
@@ -35,6 +39,8 @@ flowchart TD
 ```
 
 ## 3. Use Case Diagram
+
+![Use Case Diagram](assets/diagrams/diagram_6.png)
 
 ```plantuml
 @startuml
@@ -71,6 +77,8 @@ Anggota --> UC7
 
 ## 4. Activity Diagram (Peminjaman Buku)
 
+![Activity Diagram](assets/diagrams/diagram_3.png)
+
 ```mermaid
 stateDiagram-v2
     [*] --> Login
@@ -91,6 +99,8 @@ stateDiagram-v2
 ```
 
 ## 5. Sequence Diagram (Proses Login dan Peminjaman)
+
+![Sequence Diagram](assets/diagrams/diagram_4.png)
 
 ```mermaid
 sequenceDiagram
@@ -120,6 +130,8 @@ sequenceDiagram
 ```
 
 ## 6. Entity Relationship Diagram (ERD)
+
+![ERD](assets/diagrams/diagram_5.png)
 
 ```mermaid
 erDiagram
