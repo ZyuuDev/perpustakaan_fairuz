@@ -1,6 +1,6 @@
 # Sistem Informasi Perpustakaan Digital
 
-Aplikasi web modern berbasis PHP dan MySQL untuk mengelola operasional perpustakaan secara efisien dan tersentralisasi. Sistem ini memisahkan hak akses antara **Admin**, **Petugas**, dan **Anggota** (Peminjam), serta memiliki fitur keamanan dan manajemen relasional yang lengkap.
+Aplikasi web modern berbasis PHP dan MySQL untuk mengelola operasional perpustakaan secara efisien dan tersentralisasi. Sistem ini memisahkan hak akses antara **Admin**, **Petugas**, dan **Anggota** (Peminjam), serta memiliki fitur keamanan dan manajemen relasional yang cukup lengkap.
 
 ## 🌟 Fitur Utama
 
